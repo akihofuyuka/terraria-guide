@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>泰拉瑞亚（Terraria）</title>
+    <style>
+        :root {
+            --bg-page: #f5f6f8;
+            --bg-header: rgba(255, 255, 255, 0.96);
+            --bg-card: #ffffff;
+            --bg-option: #fafbfc;
+            --bg-option-hover: #f4f6f8;
+            --bg-code: #f1f3f6;
+            --border-subtle: #e7eaee;
+            --border-card: #dce1e6;
+            --text-primary: #20262d;
+            --text-secondary: #48525e;
+            --text-muted: #6b7581;
+            --accent: #3c6287;
+            --accent-dark: #315575;
+            --accent-soft: #eef3f8;
+            --accent-border: #c9d7e4;
+            --green: #3f6d57;
+            --green-soft: #eef5f1;
+            --green-border: #cfe0d6;
+            --amber: #8a6526;
+            --amber-soft: #fbf6ec;
+            --amber-border: #ecdcbd;
+            --rose: #9a4f56;
+            --rose-soft: #faf0f1;
+            --rose-border: #ecd2d5;
+            --slate: #5d5a86;
+            --slate-soft: #f2f1f8;
+            --slate-border: #dbd9e9;
+            --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "HarmonyOS Sans SC", "Segoe UI", Roboto, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            line-height: 1.6;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        button {
+            font-family: inherit;
+            border: none;
+            background: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.88em;
+            background-color: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: var(--bg-header);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .header-inner {
+            padding-top: 12px;
+            padding-bottom: 10px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.15s, transform 0.15s;
+        }
+
+        .btn-pill:active {
+            transform: scale(0.96);
+        }
+
+        .btn-amber-soft {
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            color: var(--text-secondary);
+        }
+
+        .btn-amber-soft:hover {
+            background: var(--bg-option-hover);
+        }
+
+        .btn-icon-only {
+            padding: 6px 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            color: var(--text-muted);
+        }
+
+        /* 进度条 */
+        .progress-track {
+            width: 100%;
+            height: 4px;
+            background: var(--border-subtle);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 999px;
+            transition: width 0.25s ease;
+        }
+
+        /* 面包屑 */
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .breadcrumbs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .crumb {
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            white-space: nowrap;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+        }
+
+        .crumb.active {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .crumb-sep {
+            color: #b6bec7;
+            font-size: 10px;
+        }
+
+        /* 主内容区 */
+        .main {
+            flex: 1;
+            padding-top: 18px;
+            padding-bottom: 12px;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(22, 32, 45, 0.03);
+            animation: fadeUp 0.2s ease-out;
+        }
+
+        .card-emerald, .card-sky, .card-purple, .card-rose {
+            border-color: var(--border-card);
+        }
+
+        .badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 9px;
+            border-radius: 5px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .badge-emerald, .badge-amber, .badge-sky, .badge-purple, .badge-rose {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* 选项卡片按钮 */
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 14px;
+            border-radius: 9px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: background 0.15s, border-color 0.15s, transform 0.12s;
+        }
+
+        .option-btn:hover {
+            background: var(--bg-option-hover);
+            border-color: var(--accent-border);
+        }
+
+        .option-btn:active {
+            transform: scale(0.99);
+        }
+
+        .option-btn.hover-emerald:hover,
+        .option-btn.hover-sky:hover,
+        .option-btn.hover-amber:hover,
+        .option-btn.hover-purple:hover {
+            border-color: var(--accent-border);
+        }
+
+        .option-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .option-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+
+        .icon-emerald, .icon-sky, .icon-amber, .icon-purple, .icon-muted {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+
+        .option-title {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .option-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            line-height: 1.5;
+        }
+
+        .tag-mini {
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--bg-code);
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tag-rose, .tag-emerald {
+            background: var(--bg-code);
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .arrow-right {
+            color: #aab3bd;
+            flex-shrink: 0;
+        }
+
+        /* 编号步骤列表 */
+        .num-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 13.5px;
+            color: var(--text-secondary);
+        }
+
+        .num-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .num-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .num-circle.icon-emerald, .num-circle.icon-sky, .num-circle.icon-amber,
+        .num-circle.icon-purple, .num-circle.icon-muted {
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+        }
+
+        /* 代码徽章 */
+        .copy-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 7px;
+            margin: 1px 0;
+            border-radius: 5px;
+            background: var(--bg-code);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            vertical-align: baseline;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .copy-chip:hover {
+            background: var(--accent-soft);
+        }
+
+        .copy-chip:active {
+            transform: scale(0.96);
+        }
+
+        /* 提示/警告框 */
+        .callout {
+            margin-top: 14px;
+            padding: 11px 13px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.6;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-option);
+            color: var(--text-secondary);
+        }
+
+        .callout-title {
+            font-weight: 700;
+            margin-bottom: 3px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .callout-amber { background: var(--amber-soft); border-color: var(--amber-border); }
+        .callout-rose { background: var(--rose-soft); border-color: var(--rose-border); }
+        .callout-sky { background: var(--accent-soft); border-color: var(--accent-border); }
+        .callout-emerald { background: var(--green-soft); border-color: var(--green-border); }
+
+        /* 路径面板与双栏网格 */
+        .path-box {
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            font-size: 12px;
+            margin-bottom: 14px;
+        }
+
+        .path-chain {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+            margin-top: 6px;
+        }
+
+        .tag-rec {
+            display: inline-block;
+            margin: 0 4px;
+            padding: 0 5px;
+            border-radius: 4px;
+            font-size: 10.5px;
+            font-weight: 600;
+            line-height: 16px;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            vertical-align: 1px;
+        }
+
+        .dl-link {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-border);
+        }
+
+        .dl-link:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        .perm-note {
+            padding: 9px 11px;
+            margin: 9px 0 0;
+            border-radius: 6px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            border-left: 2px solid var(--accent-border);
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .mini-panel {
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            font-size: 12px;
+        }
+
+        .sub-card {
+            padding: 14px;
+            border-radius: 9px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 12px;
+        }
+
+        .sub-card:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 主行动按钮 */
+        .btn-primary {
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px 16px;
+            border-radius: 9px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #ffffff;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.15s, transform 0.12s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dark);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.99);
+        }
+
+        .btn-emerald, .btn-amber, .btn-sky, .btn-purple {
+            background: var(--accent);
+        }
+
+        .btn-emerald:hover, .btn-amber:hover, .btn-sky:hover, .btn-purple:hover {
+            background: var(--accent-dark);
+        }
+
+        /* 底部导航与分享区 */
+        .footer {
+            padding-top: 6px;
+            padding-bottom: 24px;
+        }
+
+        .nav-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .nav-row.hidden {
+            display: none;
+        }
+
+        .btn-nav {
+            padding: 10px 14px;
+            border-radius: 9px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-nav:hover {
+            background: var(--bg-option-hover);
+        }
+
+        .btn-nav.flex-1 {
+            flex: 1;
+        }
+
+        .btn-nav.muted {
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        .share-bar {
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .share-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .share-text strong {
+            display: block;
+            color: var(--text-primary);
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        .btn-share {
+            padding: 8px 12px;
+            border-radius: 7px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-share:hover {
+            background: #e3ecf4;
+        }
+
+        /* 排查弹窗 */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(24, 32, 42, 0.38);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        @media (min-width: 540px) {
+            .modal-backdrop {
+                align-items: center;
+                padding: 16px;
+            }
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 520px;
+            max-height: 84vh;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 14px 14px 0 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeUp 0.2s ease-out;
+        }
+
+        @media (min-width: 540px) {
+            .modal-box {
+                border-radius: 12px;
+            }
+        }
+
+        .modal-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 16px 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            font-size: 12.5px;
+            color: var(--text-secondary);
+        }
+
+        .faq-q {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            padding: 12px 18px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* Toast 轻提示 */
+        .toast {
+            position: fixed;
+            bottom: 76px;
+            left: 50%;
+            transform: translate(-50%, 8px);
+            z-index: 60;
+            padding: 9px 16px;
+            border-radius: 999px;
+            background: #2b3440;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(22, 32, 45, 0.18);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s, transform 0.18s;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .text-emerald { color: var(--green); }
+        .text-sky { color: var(--accent); }
+        .text-amber { color: var(--amber); }
+        .text-purple { color: var(--slate); }
+        .text-rose { color: var(--rose); }
+        .text-white { color: var(--text-primary); }
+        .fw-bold { font-weight: 700; }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部固定栏 -->
+    <header class="header">
+        <div class="container header-inner">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 12h5l-3 6h12l-3-6h5L12 2z"/><path d="M12 18v4"/></svg>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button type="button" onclick="toggleTroubleshootModal(true)" class="btn-pill btn-amber-soft">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>常见排查</span>
+                    </button>
+                    <button type="button" onclick="resetWizard()" title="重新开始" class="btn-pill btn-icon-only" aria-label="重新开始">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="progress-track">
+                <div id="progress-bar" class="progress-fill" style="width: 15%;"></div>
+            </div>
+
+            <div id="breadcrumb-container" class="breadcrumbs"></div>
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="container main">
+        <div id="step-container"></div>
+    </main>
+
+    <!-- 底部操作与分享 -->
+    <footer class="container footer">
+        <div id="nav-controls" class="nav-row hidden">
+            <button type="button" onclick="goBack()" class="btn-nav flex-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span>上一步</span>
+            </button>
+            <button type="button" onclick="resetWizard()" class="btn-nav muted">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span>重新选择</span>
+            </button>
+        </div>
+
+        <div class="share-bar">
+            <div class="share-text">
+                <strong>群友也在问怎么装存档？</strong>
+                <span>复制当前路线的纯文字教程直接发群里</span>
+            </div>
+            <button type="button" onclick="copySummaryText()" class="btn-share">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span>复制文字教程</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- 常见排查弹窗 -->
+    <div id="troubleshoot-modal" class="modal-backdrop" onclick="if(event.target===this) toggleTroubleshootModal(false)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="fw-bold text-white" style="font-size:15px;">常见报错与疑难排查</span>
+                <button type="button" onclick="toggleTroubleshootModal(false)" style="padding:4px 8px;color:#6b7581;font-size:16px;" aria-label="关闭">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="faq-item">
+                    <div class="faq-q">1. 找不到一串数字的心动ID文件夹？（或国际版没有数字文件夹？）</div>
+                    <div>
+                        • <strong class="text-emerald">心动版</strong>：必须先上游戏登录账号，在存档界面把云存档<strong class="text-white">下载到本地</strong>（或新建一个本地角色/地图），才会生成数字 ID 文件夹。<br>
+                        • <strong class="text-sky">国际版</strong>：本身就<strong class="text-white">没有数字 ID 文件夹</strong>！点进游戏目录后直接就是 <code>Players</code> 和 <code>Worlds</code>。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#9a4f56;">2. 覆盖补丁后打开游戏闪退 / 黑屏？</div>
+                    <div>
+                        100% 是<strong class="text-white">补丁版本与当前游戏版本号不一致</strong>（例如游戏更新了但补丁还是老版本）。请确认补丁适配的最新版本号，或卸载重装游戏恢复原文件。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#3c6287;">3. 放了存档但进游戏看不到？</div>
+                    <div>
+                        检查三点：① 没有误放进 <code>OldSaves</code> 文件夹；② 地图（<code>.wld</code>）必须放 <code>Worlds/world</code>，人物（<code>.plr</code>）必须放 <code>Players/player</code>；③ 彻底划掉游戏后台再重进。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#8a6a3a;">4. 数据线连上电脑，Android/data 里是空的？</div>
+                    <div>
+                        安卓 11 起系统会挡住电脑对 <code>Android/data</code> 的访问，看到空文件夹是正常的。把文件先复制到手机 <code>Download</code> 文件夹，再用手机上的文件管理器移进游戏目录；文件管理器进不去 data 的话，按权限检测那一步用 Shizuku 授权。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#5d5a86;">5. iPhone 连电脑后，访达 / iTunes 里没有泰拉瑞亚？</div>
+                    <div>
+                        先解锁手机并在弹窗里点<strong class="text-white">信任</strong>；macOS 在访达里选设备后切到<strong class="text-white">文件</strong>标签，Windows 需要装 iTunes 或「Apple 设备」App 并打开<strong class="text-white">文件共享</strong>。列表里只显示支持文档管理的 App。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#5d5a86;">6. 如何通过后缀区分存档文件？</div>
+                    <div>
+                        • <code>.wld</code> = 地图存档（放 Worlds / world）<br>
+                        • <code>.plr</code> = 人物存档（放 Players / player）<br>
+                        • <code>.bak / .bak2</code> = 自动备份（删掉 .bak 后缀即可当正式存档）<br>
+                        • <code>global-metadata.dat</code> = 游戏底层补丁（仅安卓可用）
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="toggleTroubleshootModal(false)" class="btn-primary btn-emerald" style="margin-top:0;">我知道了，返回教程</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 轻量 Toast 提示 -->
+    <div id="toast" class="toast">已复制到剪贴板</div>
+
+    <script>
+        const state = {
+            history: ['start'],
+            platform: null,     // 'mobile' | 'pc'
+            os: null,           // 'android' | 'ios'
+            edition: null,      // 'xd' | 'normal'
+            goal: null,         // 'save' | 'patch' | 'editor' | 'mod'
+            hasDataPerm: null   // true | false
+        };
+
+        const ICONS = {
+            arrowRight: `<svg class="arrow-right" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+            nextBtn: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
+            copyMini: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+            android: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="14" height="10" rx="2"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/><line x1="9" y1="3" x2="7" y2="5"/><line x1="15" y1="3" x2="17" y2="5"/></svg>`,
+            apple: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-1.5 0-3 1-3 2.5 1.5 0 3-1 3-2.5z"/><path d="M16.5 13.5c0-2.2 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.8-1.3-.1-2.6.8-3.3.8-.7 0-1.7-.8-2.8-.8-1.5 0-2.8.9-3.6 2.2-1.5 2.7-.4 6.6 1.1 8.8.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.8.7 1.2 0 1.9-1 2.6-2.1.8-1.2 1.2-2.4 1.2-2.4-.1 0-2.2-.9-2.2-3.4z"/></svg>`,
+            monitor: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+            heart: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+            globe: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+            folder: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+            wand: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8L19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2L19 5"/><path d="M3 21l9-9"/><path d="M12.2 6.2L11 5"/></svg>`,
+            sliders: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,
+            check: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+            lock: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+            download: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+            usb: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="20" r="1.6"/><path d="M12 18.4V4"/><path d="M9 7l3-3 3 3"/><path d="M12 10l-4 3v3"/><path d="M12 13l4 2.5v2.5"/></svg>`
+        };
+
+        function codeBadge(text) {
+            const safe = text.replace(/'/g, "\\'");
+            return `<button type="button" onclick="copyText('${safe}')" title="复制" class="copy-chip"><span>${text}</span>${ICONS.copyMini}</button>`;
+        }
+
+        function warningBox(title, content, type = 'amber') {
+            return `
+                <div class="callout callout-${type}">
+                    <div class="callout-title">${title}</div>
+                    <div>${content}</div>
+                </div>
+            `;
+        }
+
+        function getEditionMeta() {
+            const isXD = state.edition === 'xd';
+            return {
+                isXD,
+                name: isXD ? '心动版' : '国际版',
+                androidPkg: isXD ? 'com.xd.terraria' : 'com.and.games505.TerrariaPaid',
+                worldDir: isXD ? 'world' : 'Worlds',
+                playerDir: isXD ? 'player' : 'Players'
+            };
+        }
+
+        const steps = {
+            'start': {
+                progress: 15,
+                crumb: '平台',
+                render: () => `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">第 1 步 · 确认平台与版本</span>
+                        </div>
+                        <h2 class="card-title">你用的是哪个版本的泰拉瑞亚？</h2>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectPlatform('mobile','xd')" class="option-btn hover-amber">
+                                <div class="option-left">
+                                    <div class="option-icon icon-amber">${ICONS.heart}</div>
+                                    <div>
+                                        <div class="option-title">手机心动版</div>
+                                        <div class="option-sub">安卓 / 苹果手机上的心动版</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectPlatform('mobile','normal')" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.globe}</div>
+                                    <div>
+                                        <div class="option-title">手机国际版</div>
+                                        <div class="option-sub">安卓 / 苹果手机上的国际版</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectPlatform('pc')" class="option-btn hover-sky">
+                                <div class="option-left">
+                                    <div class="option-icon icon-sky">${ICONS.monitor}</div>
+                                    <div>
+                                        <div class="option-title">电脑 Steam 版</div>
+                                        <div class="option-sub">通过 Steam 安装的泰拉瑞亚（Windows / macOS / Linux）</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+
+                    </div>
+                `
+            },
+
+            'select_os': {
+                progress: 30,
+                crumb: '系统',
+                render: () => {
+                    const meta = getEditionMeta();
+                    return `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-amber">${meta.name} · 第 2 步</span>
+                        </div>
+                        <h2 class="card-title">你的手机是什么系统？</h2>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectOS('android')" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.android}</div>
+                                    <div>
+                                        <div class="option-title">安卓 / 鸿蒙手机</div>
+                                        <div class="option-sub">小米、华为/荣耀、OPPO、vivo、三星等</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectOS('ios')" class="option-btn hover-sky">
+                                <div class="option-left">
+                                    <div class="option-icon icon-sky">${ICONS.apple}</div>
+                                    <div>
+                                        <div class="option-title">苹果（iOS / iPadOS）</div>
+                                        <div class="option-sub">iPhone 或 iPad</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+
+                    </div>
+                    `;
+                }
+            },
+
+            'select_goal': {
+                progress: 45,
+                crumb: '目的',
+                render: () => {
+                    const isAndroid = state.os === 'android';
+                    const meta = getEditionMeta();
+                    return `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">${meta.name} · 第 3 步</span>
+                        </div>
+                        <h2 class="card-title">你今天想进行哪项操作？</h2>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectGoal('save')" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.folder}</div>
+                                    <div>
+                                        <div class="option-title">导入 / 导出人物或地图存档</div>
+                                        <div class="option-sub">全物品存档、建筑地图</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectGoal('patch')" class="option-btn ${isAndroid ? 'hover-purple' : 'hover-amber'}">
+                                <div class="option-left">
+                                    <div class="option-icon ${isAndroid ? 'icon-purple' : 'icon-muted'}">${ICONS.wand}</div>
+                                    <div>
+                                        <div class="option-title">
+                                            <span>安装第一分型等游戏补丁</span>
+                                            ${!isAndroid ? '<span class="tag-mini tag-rose">仅安卓支持</span>' : ''}
+                                        </div>
+                                        <div class="option-sub">
+                                            ${isAndroid
+                                                ? `替换游戏底层文件`
+                                                : `当前系统不支持，点击查看原因与替代方案`
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectGoal('editor')" class="option-btn hover-sky">
+                                <div class="option-left">
+                                    <div class="option-icon icon-sky">${ICONS.sliders}</div>
+                                    <div>
+                                        <div class="option-title">使用存档编辑器修改物品/属性</div>
+                                        <div class="option-sub">
+                                            ${isAndroid
+                                                ? '手机端存档修改器'
+                                                : '免越狱修改存档'
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }
+            },
+
+            'pc_goal': {
+                progress: 45,
+                crumb: '目的',
+                render: () => `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-sky">电脑 Steam 版 · 第 2 步</span>
+                        </div>
+                        <h2 class="card-title">你今天想进行哪项操作？</h2>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectPcGoal('save')" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.folder}</div>
+                                    <div>
+                                        <div class="option-title">导入 / 导出人物或地图存档</div>
+                                        <div class="option-sub">放进或取出存档文件</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectPcGoal('editor')" class="option-btn hover-sky">
+                                <div class="option-left">
+                                    <div class="option-icon icon-sky">${ICONS.sliders}</div>
+                                    <div>
+                                        <div class="option-title">使用存档编辑器修改物品/属性</div>
+                                        <div class="option-sub">修改人物或地图</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectPcGoal('mod')" class="option-btn hover-purple">
+                                <div class="option-left">
+                                    <div class="option-icon icon-purple">${ICONS.wand}</div>
+                                    <div>
+                                        <div class="option-title">安装 MOD（tModLoader）</div>
+                                        <div class="option-sub">启用创意工坊 MOD</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+                    </div>
+                `
+            },
+
+            'pc_final': {
+                progress: 100,
+                crumb: '最终步骤',
+                render: () => {
+                    if (state.goal === 'editor') {
+                        return `
+                        <div class="card card-sky">
+                            <div class="badge-row">
+                                <span class="step-badge badge-sky">最终步骤 · 电脑存档编辑器</span>
+                            </div>
+                            <h2 class="card-title">修改人物与地图存档</h2>
+                            <div class="path-box">
+                                <div>人物在 ${codeBadge('Players')} 文件夹，地图在 ${codeBadge('Worlds')} 文件夹。修改前先<strong class="text-white">完全退出游戏</strong>，再按你的系统打开存档目录：</div>
+                                <div class="path-chain" style="margin-top:8px;">
+                                    <span style="color:var(--text-muted);">Windows</span> ${codeBadge('%USERPROFILE%\\Documents\\My Games\\Terraria')}
+                                </div>
+                                <div class="path-chain">
+                                    <span style="color:var(--text-muted);">macOS</span> ${codeBadge('~/Library/Application Support/Terraria')}
+                                </div>
+                                <div class="path-chain">
+                                    <span style="color:var(--text-muted);">Linux</span> ${codeBadge('~/.local/share/Terraria')}
+                                </div>
+                                <div style="color:var(--text-muted);margin-top:8px;">macOS 按 ⌘⇧G 前往文件夹，Linux 在文件管理器按 Ctrl+L 输入路径；两个系统的目录默认隐藏，需先显示隐藏文件。</div>
+                            </div>
+
+                            <div class="sub-card">
+                                <div class="fw-bold text-sky" style="margin-bottom:6px;">方法一：网页版 Terrasavr（改人物）</div>
+                                <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                    1. 用浏览器搜索并打开 <code>Terrasavr</code>。<br>
+                                    2. 点击 <strong class="text-primary">Load（加载）</strong>，选择 <code>Players</code> 文件夹里要改的 <code>.plr</code> 文件。<br>
+                                    3. 添加物品或修改生命/魔力后点击 <strong class="text-primary">Save（保存）</strong>，把新文件覆盖回原来的 <code>Players</code> 文件夹。<br>
+                                    4. 重新进入游戏即可看到修改结果。
+                                </div>
+                            </div>
+
+                            <div class="sub-card">
+                                <div class="fw-bold text-primary" style="margin-bottom:6px;">方法二：桌面版 TEdit（改地图）</div>
+                                <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                    搜索并下载 <code>TEdit</code>，打开 <code>Worlds</code> 文件夹里的 <code>.wld</code> 地图即可编辑地形与箱子内容，保存后重进游戏。
+                                </div>
+                            </div>
+
+                            ${warningBox('修改前先备份', '把要改的 <code>.plr</code> 或 <code>.wld</code> 复制一份放到别的文件夹，改坏了还能换回来。', 'amber')}
+                        </div>
+                        `;
+                    }
+
+                    if (state.goal === 'mod') {
+                        return `
+                        <div class="card card-purple">
+                            <div class="badge-row">
+                                <span class="step-badge badge-purple">最终步骤 · 电脑安装 MOD</span>
+                            </div>
+                            <h2 class="card-title">用 tModLoader 启动游戏并启用 MOD</h2>
+
+                            <ol class="num-list">
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">1</span>
+                                    <div>在 Steam 商店搜索 <code>tModLoader</code>，下载安装（它是免费软件，需要拥有正版泰拉瑞亚）。</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">2</span>
+                                    <div>在 Steam 创意工坊搜索想要的 MOD，点 <strong class="text-white">订阅</strong>，等待自动下载完成。</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">3</span>
+                                    <div>从游戏库启动 <strong class="text-purple">tModLoader</strong>（不要启动原版），在 <strong class="text-white">MOD 管理</strong> 里把刚订阅的 MOD 点启用，然后点 <strong class="text-white">重新加载</strong>。</div>
+                                </li>
+                            </ol>
+
+                            ${warningBox('联机与版本注意', '联机时双方需要装好相同的 MOD 并启用，否则进不去同一个世界；游戏或 MOD 更新后若闪退，先检查版本是否对应。', 'amber')}
+                        </div>
+                        `;
+                    }
+
+                    return `
+                    <div class="card card-emerald">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">最终步骤 · 电脑导入/导出存档</span>
+                        </div>
+                        <h2 class="card-title">把存档放进对应的角色/地图目录</h2>
+                        <div class="path-box">
+                            <div>先<strong class="text-white">完全退出游戏</strong>，再按你的系统打开存档目录：</div>
+                            <div class="path-chain" style="margin-top:8px;">
+                                <span style="color:var(--text-muted);">Windows</span> ${codeBadge('%USERPROFILE%\\Documents\\My Games\\Terraria')}
+                            </div>
+                            <div class="path-chain">
+                                <span style="color:var(--text-muted);">macOS</span> ${codeBadge('~/Library/Application Support/Terraria')}
+                            </div>
+                            <div class="path-chain">
+                                <span style="color:var(--text-muted);">Linux</span> ${codeBadge('~/.local/share/Terraria')}
+                            </div>
+                            <div style="color:var(--text-muted);margin-top:8px;">macOS 按 ⌘⇧G 前往文件夹，Linux 在文件管理器按 Ctrl+L 输入路径；两个系统的目录默认隐藏，需先显示隐藏文件。</div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="mini-panel">
+                                <div class="fw-bold text-emerald" style="margin-bottom:4px;">地图文件夹</div>
+                                <div>目录名：${codeBadge('Worlds')}</div>
+                                <div style="color:var(--text-muted);margin-top:4px;">放后缀为 <code>.wld</code> 的文件</div>
+                            </div>
+                            <div class="mini-panel">
+                                <div class="fw-bold text-sky" style="margin-bottom:4px;">人物文件夹</div>
+                                <div>目录名：${codeBadge('Players')}</div>
+                                <div style="color:var(--text-muted);margin-top:4px;">放后缀为 <code>.plr</code> 的文件</div>
+                            </div>
+                        </div>
+
+                        <ol class="num-list">
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">导</span>
+                                <div><strong class="text-white">导入存档：</strong>把下载好的 <code>.wld</code> 放进 <code>Worlds</code>，<code>.plr</code> 放进 <code>Players</code>，重新启动游戏即可在角色/世界列表看到。</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-sky">出</span>
+                                <div><strong class="text-white">导出存档：</strong>直接从这两个文件夹里复制 <code>.wld</code> 或 <code>.plr</code> 发给好友，或留作备份。</div>
+                            </li>
+                        </ol>
+
+                        ${warningBox('Steam 云存档与备份文件', '若开启了 Steam 云存档，本地替换的文件可能被云端旧存档覆盖，遇到这种情况可先在游戏属性里关闭云存档再替换。带 <code>.bak</code> / <code>.bak2</code> 的是自动备份，删掉后缀即可当正式存档使用。', 'sky')}
+                    </div>
+                    `;
+                }
+            },
+
+            'android_prep': {
+                progress: 56,
+                crumb: '准备工作',
+                render: () => {
+                    const isPatch = state.goal === 'patch';
+                    const isEditor = state.goal === 'editor';
+                    const isSave = state.goal === 'save';
+                    const meta = getEditionMeta();
+
+                    const pathLine = `${codeBadge('Android')} <span>→</span> ${codeBadge('data')} <span>→</span> ${codeBadge(meta.androidPkg)}`;
+                    const innerLine = meta.isXD
+                        ? `再点进 <strong class="text-amber">一串数字的心动ID</strong> 文件夹，里面就是 ${codeBadge(meta.worldDir)}（地图）和 ${codeBadge(meta.playerDir)}（人物）。`
+                        : `进去后直接就是 ${codeBadge(meta.worldDir)}（地图）和 ${codeBadge(meta.playerDir)}（人物）。`;
+
+                    const pathBlock = `
+                        <div class="path-box" style="margin:10px 0 0;">
+                            <div class="path-chain" style="margin-top:0;">${pathLine}</div>
+                            <div style="margin-top:6px;">${innerLine}</div>
+                        </div>`;
+
+                    const installStep = `装一个能进入 <code>Android/data</code> 的文件管理器。首选 <strong class="text-white">MT 管理器</strong><span class="tag-rec">推荐</span>（<a class="dl-link" href="https://mt2.cn/download/" target="_blank" rel="noopener">官网下载</a>）；也可以装 <strong class="text-white">ZArchiver</strong>，部分机型（小米、OPPO 等）系统自带的文件管理也能进。下面以 MT 管理器为例，装好后<strong class="text-emerald">先打开一次</strong>（弹出存储权限时点允许）。`;
+
+                    const fileStep = isPatch
+                        ? `把补丁文件下载到手机上（群文件、网盘、浏览器都行）。`
+                        : `把存档下载到手机上（群文件、网盘、浏览器都行）；只导出自己的存档可以跳过这步。`;
+
+                    const permNote = `
+                        <div class="perm-note">
+                            现代安卓系统默认禁止第三方 App 直接读写 <code>Android/data</code> 下的存档，下一步先确认你的手机是否有直接访问权限。
+                        </div>`;
+
+                    const lastStep = isPatch
+                        ? `在文件管理器里找到刚下载的补丁文件，待会直接复制到游戏目录。${permNote}`
+                        : `打开文件管理器，按下面的路径进游戏目录。${permNote}${pathBlock}`;
+
+                    if (isEditor) {
+                        return `
+                        <div class="card">
+                            <div class="badge-row">
+                                <span class="step-badge badge-emerald">${meta.name} · 准备工作</span>
+                            </div>
+                            <h2 class="card-title">下载编辑器与管理工具</h2>
+
+                            <ol class="num-list">
+                                <li class="num-item">
+                                    <span class="num-circle icon-emerald">1</span>
+                                    <div>${installStep}</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-emerald">2</span>
+                                    <div>下载并安装 <strong class="text-sky">泰拉瑞亚存档编辑器</strong>（群文件、网盘、浏览器都行；高版本安卓还要一并装 <strong class="text-amber">Shizuku</strong>）。</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-emerald">3</span>
+                                    <div>打开一次编辑器，能正常进入主界面即可。${permNote}</div>
+                                </li>
+                            </ol>
+
+                            ${warningBox('修改前防丢档提醒', '修改存档前，强烈建议先用文件管理器把原 <code>.plr</code> / <code>.wld</code> 文件复制一份到其他文件夹备份。', 'amber')}
+
+                            <button type="button" onclick="goTo('android_check_perm')" class="btn-primary btn-emerald">
+                                <span>已准备好，下一步检测目录权限</span>
+                                ${ICONS.nextBtn}
+                            </button>
+                        </div>
+                        `;
+                    }
+
+                    return `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">${meta.name} · 准备工作</span>
+                        </div>
+                        <h2 class="card-title">${isSave ? '找到存档位置并装好工具' : '下载补丁并装好文件管理器'}</h2>
+
+                        <ol class="num-list">
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">1</span>
+                                <div>${installStep}</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">2</span>
+                                <div>${fileStep}</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">3</span>
+                                <div>${lastStep}</div>
+                            </li>
+                        </ol>
+
+                        ${warningBox('双窗口操作口诀', 'MT 管理器分为<strong>左右两个独立窗口</strong>：一侧放刚下载的文件，另一侧进游戏目录，复制粘贴就在两个窗口之间完成。定位到文件的那一侧（比如左边）<strong>不要动</strong>，接下来只操作<strong>另一侧窗口</strong>。', 'sky')}
+
+                        <button type="button" onclick="goTo('android_check_perm')" class="btn-primary btn-emerald">
+                            <span>已准备好，下一步检测目录权限</span>
+                            ${ICONS.nextBtn}
+                        </button>
+                    </div>
+                    `;
+                }
+            },
+
+            'android_check_perm': {
+                progress: 66,
+                crumb: '权限检测',
+                render: () => `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">安卓/鸿蒙 · 权限分流</span>
+                        </div>
+                        <h2 class="card-title">检查 Android/data 访问权限</h2>
+                        <p class="card-desc">
+                            打开文件管理器（MT 管理器在其中一侧窗口操作即可），依次点击进入：${codeBadge('Android')} → ${codeBadge('data')}
+                        </p>
+
+                        ${warningBox('防踩坑提醒', '列表里可能同时存在 <code>.Android</code> 和 <code>Android</code>，请务必点没有小数点的 <strong>Android</strong>！', 'amber')}
+
+                        <p class="fw-bold text-white mt-3" style="margin-bottom:10px;">点进 data 后，屏幕显示哪种情况？</p>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectDataPerm(true)" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.check}</div>
+                                    <div>
+                                        <div class="option-title">能正常看到里面的一堆文件夹</div>
+                                        <div class="option-sub">鸿蒙或老版本安卓常见，直接跳过授权！</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectDataPerm(false)" class="option-btn hover-amber">
+                                <div class="option-left">
+                                    <div class="option-icon icon-amber">${ICONS.lock}</div>
+                                    <div>
+                                        <div class="option-title">提示“没有权限”或显示为空</div>
+                                        <div class="option-sub">按下一步指引解锁权限</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+                    </div>
+                `
+            },
+
+            'shizuku_guide': {
+                progress: 82,
+                crumb: 'Shizuku 授权',
+                render: () => `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-amber">安卓/鸿蒙 · 解锁 data 权限</span>
+                        </div>
+                        <h2 class="card-title">用 Shizuku 打开 Android/data</h2>
+
+                        <div class="path-box">
+                            <div style="color:#6b7581;">Shizuku 的安装、配对与启动各机型差异较大，按官方文档操作：</div>
+                            <div style="margin-top:6px;">
+                                <a class="dl-link" href="https://shizuku.rikka.app/" target="_blank" rel="noopener">shizuku.rikka.app</a>
+                            </div>
+                        </div>
+
+                        <ol class="num-list">
+                            <li class="num-item">
+                                <span class="num-circle icon-amber">1</span>
+                                <div>跟着官方文档装好并启动 Shizuku，主页面显示 <strong class="text-emerald">已启动</strong> 即可。</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-amber">2</span>
+                                <div>点主页面的 <strong class="text-white">已授权 X 个应用</strong>，找到 <strong class="text-emerald">MT 管理器</strong>（装的若是 ZArchiver 就选它）打开开关；装了<strong class="text-sky">存档编辑器</strong>的也一并打开。</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-amber">3</span>
+                                <div><strong class="text-amber">彻底划掉后台，重新打开文件管理器</strong>，再进 ${codeBadge('Android')} → ${codeBadge('data')} 就能看到里面的文件夹了。</div>
+                            </li>
+                        </ol>
+
+                        <button type="button" onclick="goTo('android_final')" class="btn-primary btn-emerald">
+                            <span>已能打开 data，进入最终操作步骤</span>
+                            ${ICONS.nextBtn}
+                        </button>
+                    </div>
+                `
+            },
+
+            'android_final': {
+                progress: 100,
+                crumb: '最终步骤',
+                render: () => {
+                    const meta = getEditionMeta();
+
+                    if (state.goal === 'patch') {
+                        return `
+                        <div class="card card-purple">
+                            <div class="badge-row">
+                                <span class="step-badge badge-purple">最终步骤 · ${meta.name}安装补丁</span>
+                            </div>
+                            <h2 class="card-title">替换游戏底层补丁文件</h2>
+                            <p class="card-desc">在 MT 管理器<strong class="text-white">另一侧窗口</strong>（已打开 data 的那一侧）继续向下点：</p>
+
+                            <div class="path-box">
+                                <div style="color:#6b7581;">依次进入以下目录：</div>
+                                <div class="path-chain">
+                                    ${codeBadge(meta.androidPkg)} <span>→</span>
+                                    ${codeBadge('files')} <span>→</span>
+                                    ${codeBadge('il2cpp')} <span>→</span>
+                                    ${codeBadge('Metadata')}
+                                </div>
+                                <div style="font-size:11px;color:#6b7581;margin-top:6px;">提示：补丁目录不包含数字ID文件夹，两个版本的层级结构完全一致。</div>
+                            </div>
+
+                            <ol class="num-list">
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">1</span>
+                                    <div>进入 ${codeBadge('Metadata')} 后，你会看到里面原本就有一个与你下载的补丁<strong class="text-white">同名</strong>的文件（通常是 ${codeBadge('global-metadata.dat')}）。</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">2</span>
+                                    <div>回到 MT 管理器的<strong class="text-emerald">另一侧窗口</strong>（补丁文件所在的那一侧，一般在 Download），长按补丁文件选择 <strong class="text-white">复制</strong> 或 <strong class="text-white">移动</strong> 到右边的 Metadata 文件夹中。</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">3</span>
+                                    <div>在弹出的提示框中点击 <strong class="text-purple">替换</strong> 原文件，重启游戏即可生效！</div>
+                                </li>
+                            </ol>
+
+                            ${warningBox('防丢档与防闪退建议', '覆盖前建议长按原版 <code>global-metadata.dat</code> 先备份一份。如果覆盖后打开游戏闪退，说明补丁版本与当前游戏版本号不匹配。', 'amber')}
+                        </div>
+                        `;
+                    }
+
+                    if (state.goal === 'editor') {
+                        const pathTip = meta.isXD
+                            ? `定位路径：<code>Android / data / ${meta.androidPkg} / 一串数字的心动ID / world 或 player</code>`
+                            : `定位路径：<code>Android / data / ${meta.androidPkg} / Worlds 或 Players</code>（没有数字ID文件夹，直接就是存档目录）`;
+
+                        return `
+                        <div class="card card-sky">
+                            <div class="badge-row">
+                                <span class="step-badge badge-sky">最终步骤 · ${meta.name}存档编辑器</span>
+                            </div>
+                            <h2 class="card-title">使用手机端存档修改器改全物品</h2>
+
+                            <ol class="num-list">
+                                <li class="num-item">
+                                    <span class="num-circle icon-sky">1</span>
+                                    <div>打开装好的 <strong class="text-sky">泰拉瑞亚存档编辑器</strong>（若弹出 Shizuku 授权请求，点击 <strong class="text-emerald">始终允许</strong>）。</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-sky">2</span>
+                                    <div>
+                                        在编辑器中选择加载角色（<code>.plr</code>）或世界（<code>.wld</code>）：<br>
+                                        <span style="font-size:12px;color:#6b7581;display:inline-block;margin-top:4px;">${pathTip}</span>
+                                    </div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-sky">3</span>
+                                    <div>自由添加背包全物品、修改生命/魔力上限或武器词缀后，点击 <strong class="text-white">保存</strong>，重新启动游戏即可看到修改结果！</div>
+                                </li>
+                            </ol>
+                        </div>
+                        `;
+                    }
+
+                    const step2Desc = meta.isXD
+                        ? `2. 点进 <strong class="text-amber">一串纯数字</strong> 的文件夹（这是你的心动账号 ID；若有多个说明登录过多个号）。`
+                        : `2. <strong class="text-emerald">注意：国际版没有数字ID文件夹！</strong>点进包名后直接就能看到 ${codeBadge('Worlds')} 和 ${codeBadge('Players')}。`;
+
+                    return `
+                    <div class="card card-emerald">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">最终步骤 · ${meta.name}导入/导出存档</span>
+                        </div>
+                        <h2 class="card-title">将存档放入对应的角色/地图目录</h2>
+                        <p class="card-desc">在 MT 管理器<strong class="text-white">另一侧窗口</strong>（已打开 data 的那一侧）继续操作：</p>
+
+                        <div class="path-box">
+                            <div>1. 找到并进入游戏包名：${codeBadge(meta.androidPkg)}</div>
+                            <div style="margin-top:6px;">${step2Desc}</div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="mini-panel">
+                                <div class="fw-bold text-emerald" style="margin-bottom:4px;">地图文件夹</div>
+                                <div>目录名：${codeBadge(meta.worldDir)}</div>
+                                <div style="color:#6b7581;margin-top:4px;">放后缀为 <code>.wld</code> 的文件</div>
+                            </div>
+                            <div class="mini-panel">
+                                <div class="fw-bold text-sky" style="margin-bottom:4px;">人物文件夹</div>
+                                <div>目录名：${codeBadge(meta.playerDir)}</div>
+                                <div style="color:#6b7581;margin-top:4px;">放后缀为 <code>.plr</code> 的文件</div>
+                            </div>
+                        </div>
+
+                        <ol class="num-list">
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">导</span>
+                                <div><strong class="text-white">导入存档：</strong>把另一侧窗口里下载好的存档，长按选择 <strong class="text-emerald">复制或移动</strong> 到对应的 <code>${meta.worldDir}</code> 或 <code>${meta.playerDir}</code> 文件夹内。</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-sky">出</span>
+                                <div><strong class="text-white">导出存档：</strong>长按文件夹里的 <code>.wld</code> 或 <code>.plr</code> 文件，点击 <strong class="text-sky">分享</strong> 即可发给好友或自己保存。</div>
+                            </li>
+                        </ol>
+
+                        ${warningBox(
+                            meta.isXD ? '心动云存档与 .bak 备份科普' : '.bak 备份文件复活科普',
+                            `${meta.isXD ? '① 心动云存档必须<strong>先上游戏下载到本地</strong>，数字文件夹里才会显示；<br>② ' : ''}带 <code>.wld.bak</code> 或 <code>.bak2</code> 的是系统自动备份，重命名把 <code>.bak</code> 后缀删掉就能当正式存档用！`,
+                            'sky'
+                        )}
+                    </div>
+                    `;
+                }
+            },
+
+            'ios_final': {
+                progress: 100,
+                crumb: '苹果步骤',
+                render: () => {
+                    const meta = getEditionMeta();
+
+                    if (state.goal === 'patch') {
+                        return `
+                        <div class="card card-rose">
+                            <div class="badge-row">
+                                <span class="step-badge badge-rose">苹果 iOS 端 · 补丁功能说明</span>
+                            </div>
+                            <h2 class="card-title">苹果端不支持安装第一分型等补丁</h2>
+                            <p class="card-desc" style="color:var(--text-secondary);">
+                                由于苹果 iOS 系统的封闭沙盒安全机制，普通用户无法访问 App 安装包内部的代码目录（即找不到安卓的 <code>il2cpp/Metadata</code> 文件夹），因此<strong class="text-rose">无法安装修改游戏底层数据的补丁</strong>（也无需下载 MT 管理器）。
+                            </p>
+
+                            <div class="sub-card">
+                                <div class="fw-bold text-emerald" style="margin-bottom:6px;">苹果端替代方案（同样能爽玩全物品）：</div>
+                                <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.6;">
+                                    1. <strong class="text-white">直接导入全物品地图/人物存档</strong>：群里的 <code>.wld</code> 全物品地图和 <code>.plr</code> 全物品人物，苹果端 100% 支持直接导入！<br>
+                                    2. <strong class="text-white">使用网页版存档编辑器</strong>：通过 Safari 打开 <code>Terrasavr</code>，可以直接往自己的人物背包里塞入任意装备和材料。
+                                </div>
+                            </div>
+
+                            <div class="grid-2 mt-3" style="margin-bottom:0;">
+                                <button type="button" onclick="selectGoal('save')" class="btn-primary btn-sky" style="margin-top:0;font-size:12.5px;">去导入全物品存档</button>
+                                <button type="button" onclick="selectGoal('editor')" class="btn-primary btn-purple" style="margin-top:0;font-size:12.5px;">看网页修改器教程</button>
+                            </div>
+                        </div>
+                        `;
+                    }
+
+                    if (state.goal === 'editor') {
+                        const iosSavePath = meta.isXD
+                            ? `我的 iPhone / 泰拉瑞亚 / 一串数字的心动ID / Players`
+                            : `我的 iPhone / Terraria / Players`;
+
+                        return `
+                        <div class="card card-purple">
+                            <div class="badge-row">
+                                <span class="step-badge badge-purple">苹果 ${meta.name} · 存档编辑器</span>
+                            </div>
+                            <h2 class="card-title">免越狱修改全物品与人物属性</h2>
+
+                            <div class="sub-card">
+                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                                    <span class="fw-bold text-purple">方法 1：网页版 Terrasavr（最推荐）</span>
+                                    <span class="tag-mini tag-emerald">免费免下载</span>
+                                </div>
+                                <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                    1. 打开苹果 Safari 浏览器搜索并进入 ${codeBadge('Terrasavr')}。<br>
+                                    2. 点击网页里的 <strong class="text-white">Load（加载）</strong>，在弹出窗口中依次打开：<br>
+                                    <code>${iosSavePath}</code> 里的 <code>.plr</code> 人物文件。<br>
+                                    3. 自由往背包添加任意全物品、修改血量/魔力/词缀后，点击 <strong class="text-white">Save（保存）</strong> 下载下来。<br>
+                                    4. 把下载的新 <code>.plr</code> 文件存回原 <code>Players</code> 文件夹覆盖，重进游戏即可！
+                                </div>
+                            </div>
+
+                            <div class="sub-card">
+                                <div class="fw-bold text-white" style="margin-bottom:4px;">方法 2：手机 App 编辑器</div>
+                                <div style="font-size:12px;color:var(--text-muted);line-height:1.55;">
+                                    App Store 中搜索 <strong class="text-white">TR Save Editor</strong> 等存档编辑器，下载后直接在软件里选择泰拉瑞亚文件夹的存档进行可视化编辑。苹果商店里的是阉割版，功能不一定齐全。
+                                </div>
+                            </div>
+
+                            ${warningBox('修改前必做备份', '使用编辑器修改前，务必在苹果自带的“文件”App 里长按原 <code>.plr</code> 文件点一下<strong>复制</strong>留个底，防止改坏了存档！', 'amber')}
+                        </div>
+                        `;
+                    }
+
+                    const pathStepsHtml = meta.isXD
+                        ? `<strong class="text-white">浏览</strong> → <strong class="text-white">我的 iPhone</strong> → 点开 <strong class="text-emerald">泰拉瑞亚（Terraria）</strong> → 点进 <strong class="text-amber">一串纯数字的心动ID</strong>`
+                        : `<strong class="text-white">浏览</strong> → <strong class="text-white">我的 iPhone</strong> → 点开 <strong class="text-emerald">Terraria</strong>（<span class="text-emerald">国际版没有数字ID文件夹</span>，直接就能看到 Players 和 Worlds）`;
+
+                    return `
+                    <div class="card card-sky">
+                        <div class="badge-row">
+                            <span class="step-badge badge-sky">苹果 ${meta.name} · 导入与导出存档</span>
+                        </div>
+                        <h2 class="card-title">通过苹果“文件”App 管理存档</h2>
+
+                        <div class="sub-card">
+                            <div class="fw-bold text-sky" style="margin-bottom:6px;">一、把存档导进游戏</div>
+                            <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                1. 用手机把存档下载下来（群文件、网盘、浏览器都可以；地图为 ${codeBadge('.wld')}，人物为 ${codeBadge('.plr')}），在下载列表里点分享图标或“用其他应用打开”，选择 <strong class="text-sky">存储到“文件”</strong>。<br>
+                                2. 依次进入：${pathStepsHtml}。<br>
+                                3. 地图放进 ${codeBadge('Worlds')}，人物放进 ${codeBadge('Players')}，点击右上角 <strong class="text-white">存储</strong>，最后<strong class="text-sky">彻底划掉游戏后台重进</strong>即可！
+                            </div>
+                        </div>
+
+                        <div class="sub-card">
+                            <div class="fw-bold text-emerald" style="margin-bottom:6px;">二、导出本地存档发给别人</div>
+                            <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.6;">
+                                打开桌面上的 <strong class="text-sky">“文件”App</strong>，按上方相同路径进入 <code>Worlds</code> 或 <code>Players</code>，长按要导出的 <code>.wld</code> 或 <code>.plr</code> 文件，点 <strong class="text-emerald">共享</strong> 就能发到群里或存进网盘。
+                            </div>
+                        </div>
+
+                        <div class="sub-card">
+                            <div class="fw-bold text-white" style="margin-bottom:6px;">三、用数据线连电脑（存档在电脑上时）</div>
+                            <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                1. 数据线连接 iPhone 与电脑，手机上弹出「要信任此电脑吗」时点 <strong class="text-white">信任</strong> 并输入锁屏密码。<br>
+                                2. macOS 打开 <strong class="text-white">访达</strong>，左侧点你的 iPhone，顶部切到 <strong class="text-white">文件</strong>；Windows 打开 <strong class="text-white">iTunes</strong>（或「Apple 设备」App）→ 设备 → <strong class="text-white">文件共享</strong>。<br>
+                                3. 列表里选 <strong class="text-emerald">泰拉瑞亚 / Terraria</strong>，右侧就是游戏的 Documents 目录${meta.isXD ? '，先进一串数字的心动ID文件夹' : ''}。<br>
+                                4. 把 ${codeBadge('.wld')} 拖进 ${codeBadge('Worlds')}、${codeBadge('.plr')} 拖进 ${codeBadge('Players')}，同名文件选<strong class="text-white">替换</strong>；导出就从右侧反向拖到电脑。改完<strong class="text-sky">划掉游戏后台重进</strong>。
+                            </div>
+                        </div>
+
+                        ${warningBox(
+                            '苹果端防踩坑提醒',
+                            `${meta.isXD ? '① 心动版云存档需<strong>先上游戏下载到本地</strong>才会显示；<br>② ' : ''}千万不要误放进 <code>OldSaves</code> 文件夹里，否则进游戏完全读不出来！`,
+                            'rose'
+                        )}
+                    </div>
+                    `;
+                }
+            }
+        };
+
+        function selectPlatform(platform, edition) {
+            state.platform = platform;
+            state.edition = edition || null;
+            state.os = null;
+            state.goal = null;
+            state.hasDataPerm = null;
+            goTo(platform === 'pc' ? 'pc_goal' : 'select_os');
+        }
+
+        function selectOS(os) {
+            state.os = os;
+            state.goal = null;
+            state.hasDataPerm = null;
+            goTo('select_goal');
+        }
+
+        function selectGoal(goal) {
+            state.goal = goal;
+            state.hasDataPerm = null;
+            goTo(state.os === 'android' ? 'android_prep' : 'ios_final');
+        }
+
+        function selectPcGoal(goal) {
+            state.goal = goal;
+            goTo('pc_final');
+        }
+
+        function selectDataPerm(hasPerm) {
+            state.hasDataPerm = hasPerm;
+            if (hasPerm) {
+                goTo('android_final');
+            } else {
+                goTo('shizuku_guide');
+            }
+        }
+
+        function goTo(stepId) {
+            if (state.history[state.history.length - 1] !== stepId) {
+                state.history.push(stepId);
+            }
+            renderCurrentStep();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            if (state.history.length > 1) {
+                state.history.pop();
+                renderCurrentStep();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function jumpToHistoryIndex(index) {
+            if (index >= 0 && index < state.history.length - 1) {
+                state.history = state.history.slice(0, index + 1);
+                renderCurrentStep();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function resetWizard() {
+            state.history = ['start'];
+            state.platform = null;
+            state.os = null;
+            state.edition = null;
+            state.goal = null;
+            state.hasDataPerm = null;
+            renderCurrentStep();
+            showToast('已重置向导，请重新选择');
+        }
+
+        function renderCurrentStep() {
+            const currentId = state.history[state.history.length - 1];
+            const stepObj = steps[currentId];
+            if (!stepObj) return;
+
+            document.getElementById('step-container').innerHTML = stepObj.render();
+            document.getElementById('progress-bar').style.width = `${stepObj.progress}%`;
+
+            const breadcrumbContainer = document.getElementById('breadcrumb-container');
+            breadcrumbContainer.innerHTML = state.history.map((id, idx) => {
+                const isLast = idx === state.history.length - 1;
+                let label = steps[id]?.crumb || id;
+
+                const goalNames = { save: '导存档', patch: '装补丁', editor: '修改器', mod: '装MOD' };
+                if (id === 'start' && state.platform) {
+                    label = state.platform === 'pc'
+                        ? '电脑Steam版'
+                        : (state.edition === 'xd' ? '手机心动版' : '手机国际版');
+                } else if (id === 'select_os' && state.os) {
+                    label = state.os === 'android' ? '安卓/鸿蒙' : '苹果iOS';
+                } else if ((id === 'select_goal' || id === 'pc_goal') && state.goal) {
+                    label = goalNames[state.goal] || label;
+                }
+
+                const clickAttr = !isLast ? `onclick="jumpToHistoryIndex(${idx})"` : '';
+                const arrow = idx < state.history.length - 1 ? '<span class="crumb-sep">›</span>' : '';
+                return `<button type="button" ${clickAttr} class="crumb ${isLast ? 'active' : ''}">${label}</button>${arrow}`;
+            }).join('');
+
+            const navControls = document.getElementById('nav-controls');
+            if (state.history.length > 1) {
+                navControls.classList.remove('hidden');
+            } else {
+                navControls.classList.add('hidden');
+            }
+        }
+
+        function toggleTroubleshootModal(show) {
+            const modal = document.getElementById('troubleshoot-modal');
+            if (show) {
+                modal.classList.add('open');
+            } else {
+                modal.classList.remove('open');
+            }
+        }
+
+        let toastTimer = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        function copyText(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(`已复制: ${text}`);
+            } catch (err) {
+                showToast('复制失败，请长按手动选择');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function copySummaryText() {
+            const meta = getEditionMeta();
+            let summary = '';
+
+            if (state.platform === 'pc') {
+                if (state.goal === 'mod') {
+                    summary = '【电脑 Steam 版 泰拉瑞亚安装 MOD 教程】\n1. Steam 商店搜索并安装免费的 tModLoader。\n2. 创意工坊订阅需要的 MOD，等待下载完成。\n3. 从游戏库启动 tModLoader（不要启动原版），在 MOD 管理里启用并重新加载。\n（联机时双方 MOD 列表需一致，更新后闪退先检查版本对应）';
+                } else if (state.goal === 'editor') {
+                    summary = '【电脑 Steam 版 泰拉瑞亚修改存档教程】\n1. 存档目录：文档 / My Games / Terraria，人物在 Players，地图在 Worlds。\n2. 改人物：浏览器打开 Terrasavr，Load 选择 .plr，改完 Save 覆盖回 Players。\n3. 改地图：用桌面版 TEdit 打开 .wld 编辑后保存，重进游戏即可（改前先备份原文件）。';
+                } else {
+                    summary = '【电脑 Steam 版 泰拉瑞亚导入/导出存档教程】\n1. 完全退出游戏，按系统打开存档目录：Windows 输入 %USERPROFILE%\\Documents\\My Games\\Terraria；macOS 按 ⌘⇧G 前往 ~/Library/Application Support/Terraria；Linux 按 Ctrl+L 输入 ~/.local/share/Terraria。\n2. 地图(.wld)放进 Worlds，人物(.plr)放进 Players，重新启动游戏即可看到。\n3. 导出时直接从这两个文件夹复制文件发给好友；带 .bak 的是自动备份，删掉后缀可当正式存档。若开了 Steam 云存档导致替换失效，可先关闭云存档。';
+                }
+                copyText(summary);
+                showToast('已复制电脑版精简教程，快去群里粘贴吧！');
+                return;
+            }
+
+            if (state.os === 'ios') {
+                const iosDirText = meta.isXD
+                    ? `浏览 -> 我的 iPhone -> 泰拉瑞亚 -> 一串数字的心动ID`
+                    : `浏览 -> 我的 iPhone -> Terraria`;
+                const iosPlayers = meta.isXD
+                    ? `我的 iPhone / 泰拉瑞亚 / 一串数字的心动ID / Players`
+                    : `我的 iPhone / Terraria / Players`;
+
+                if (state.goal === 'patch') {
+                    summary = `【苹果(iOS) ${meta.name} 泰拉瑞亚说明】\n苹果的应用是沙盒机制，进不到安卓那种 il2cpp/Metadata 目录，装不了底层补丁。\n替代方案：① 直接导入全物品地图/人物存档（.wld / .plr）；② 用 Safari 打开网页版 Terrasavr 往背包塞物品。`;
+                } else if (state.goal === 'editor') {
+                    summary = `【苹果(iOS) ${meta.name} 泰拉瑞亚修改存档教程】\n1. 用 Safari 打开网页版 Terrasavr（免费免下载）。\n2. 点 Load，选 .plr 人物文件：${iosPlayers}。\n3. 改完点 Save 下载，覆盖回 Players，划掉游戏后台重进（改前先复制一份备份）。\n（App Store 里的编辑器是阉割版，功能不一定齐全）`;
+                } else {
+                    summary = `【苹果(iOS) ${meta.name} 泰拉瑞亚存档教程】\n1. 把存档下载到手机(.wld 地图 / .plr 人物) -> 分享 -> 存储到“文件”。\n2. 路径：${iosDirText}（切勿放进 OldSaves）。\n3. 地图放 Worlds，人物放 Players，划掉游戏后台重进。\n（存档在电脑上：数据线连 iPhone，访达或 iTunes -> 文件共享 -> 选泰拉瑞亚，直接拖进 Worlds / Players）`;
+                }
+            } else if (state.goal === 'patch') {
+                summary = `【安卓/鸿蒙 ${meta.name} 泰拉瑞亚安装补丁教程】\n1. 装文件管理器：首选 MT 管理器（官网 mt2.cn），ZArchiver 也行；把补丁文件下载到手机（群文件、网盘、浏览器都行）。\n2. 打开 MT 进 Android -> data -> ${meta.androidPkg} -> files -> il2cpp -> Metadata；data 打不开说明没权限，按官方文档装好 Shizuku 并授权 MT（shizuku.rikka.app）。\n3. 把补丁复制/移动过去，选择“替换”原文件。`;
+            } else if (state.goal === 'editor') {
+                const saveSubPath = meta.isXD ? `一串数字的心动ID -> world 或 player` : `Worlds 或 Players`;
+                summary = `【安卓/鸿蒙 ${meta.name} 泰拉瑞亚存档编辑器教程】\n1. 装 MT 管理器（官网 mt2.cn）和存档编辑器（群文件、网盘、浏览器都行）；高版本安卓还要装 Shizuku，按官方文档 shizuku.rikka.app 安装配对。\n2. 打开编辑器加载存档：Android -> data -> ${meta.androidPkg} -> ${saveSubPath}。\n3. 改完点保存，重启游戏生效（改前先备份原存档）。`;
+            } else {
+                const idLayer = meta.isXD ? ` -> 一串数字的心动ID` : '';
+                summary = `【安卓/鸿蒙 ${meta.name} 泰拉瑞亚存档教程】\n1. 装文件管理器：首选 MT 管理器（官网 mt2.cn），ZArchiver 也行；把存档下载到手机（群文件、网盘、浏览器都行）。\n2. 打开 MT 进 Android -> data -> ${meta.androidPkg}${idLayer}，里面就是 ${meta.worldDir} 和 ${meta.playerDir}；data 打不开说明没权限，按官方文档装好 Shizuku 并授权 MT（shizuku.rikka.app）。\n3. 地图(.wld) 放进 ${meta.worldDir}，人物(.plr) 放进 ${meta.playerDir}；带 .bak 的删掉后缀可当正式存档，改完划掉游戏后台重进。`;
+            }
+            copyText(summary);
+            showToast('已复制当前路线精简教程，快去群里粘贴吧！');
+        }
+
+        window.onload = function () {
+            renderCurrentStep();
+        };
+    </script>
+</body>
+</html>
