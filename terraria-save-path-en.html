@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Terraria Save & Patch Guide</title>
+    <style>
+        :root {
+            --bg-page: #f5f6f8;
+            --bg-header: rgba(255, 255, 255, 0.96);
+            --bg-card: #ffffff;
+            --bg-option: #fafbfc;
+            --bg-option-hover: #f4f6f8;
+            --bg-code: #f1f3f6;
+            --border-subtle: #e7eaee;
+            --border-card: #dce1e6;
+            --text-primary: #20262d;
+            --text-secondary: #48525e;
+            --text-muted: #6b7581;
+            --accent: #3c6287;
+            --accent-dark: #315575;
+            --accent-soft: #eef3f8;
+            --accent-border: #c9d7e4;
+            --green: #3f6d57;
+            --green-soft: #eef5f1;
+            --green-border: #cfe0d6;
+            --amber: #8a6526;
+            --amber-soft: #fbf6ec;
+            --amber-border: #ecdcbd;
+            --rose: #9a4f56;
+            --rose-soft: #faf0f1;
+            --rose-border: #ecd2d5;
+            --slate: #5d5a86;
+            --slate-soft: #f2f1f8;
+            --slate-border: #dbd9e9;
+            --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "HarmonyOS Sans SC", "Segoe UI", Roboto, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            line-height: 1.6;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        button {
+            font-family: inherit;
+            border: none;
+            background: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.88em;
+            background-color: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* Top Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: var(--bg-header);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .header-inner {
+            padding-top: 12px;
+            padding-bottom: 10px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.15s, transform 0.15s;
+        }
+
+        .btn-pill:active {
+            transform: scale(0.96);
+        }
+
+        .btn-amber-soft {
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            color: var(--text-secondary);
+        }
+
+        .btn-amber-soft:hover {
+            background: var(--bg-option-hover);
+        }
+
+        .btn-icon-only {
+            padding: 6px 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            color: var(--text-muted);
+        }
+
+        /* Progress Bar */
+        .progress-track {
+            width: 100%;
+            height: 4px;
+            background: var(--border-subtle);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 999px;
+            transition: width 0.25s ease;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .breadcrumbs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .crumb {
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            white-space: nowrap;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+        }
+
+        .crumb.active {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .crumb-sep {
+            color: #b6bec7;
+            font-size: 10px;
+        }
+
+        /* Main Content Area */
+        .main {
+            flex: 1;
+            padding-top: 18px;
+            padding-bottom: 12px;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(22, 32, 45, 0.03);
+            animation: fadeUp 0.2s ease-out;
+        }
+
+        .card-emerald, .card-sky, .card-purple, .card-rose {
+            border-color: var(--border-card);
+        }
+
+        .badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 9px;
+            border-radius: 5px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .badge-emerald, .badge-amber, .badge-sky, .badge-purple, .badge-rose {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* Option Card Buttons */
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 14px;
+            border-radius: 9px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: background 0.15s, border-color 0.15s, transform 0.12s;
+        }
+
+        .option-btn:hover {
+            background: var(--bg-option-hover);
+            border-color: var(--accent-border);
+        }
+
+        .option-btn:active {
+            transform: scale(0.99);
+        }
+
+        .option-btn.hover-emerald:hover,
+        .option-btn.hover-sky:hover,
+        .option-btn.hover-amber:hover,
+        .option-btn.hover-purple:hover {
+            border-color: var(--accent-border);
+        }
+
+        .option-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .option-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+
+        .icon-emerald, .icon-sky, .icon-amber, .icon-purple, .icon-muted {
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+
+        .option-title {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .option-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            line-height: 1.5;
+        }
+
+        .tag-mini {
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--bg-code);
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tag-rose, .tag-emerald {
+            background: var(--bg-code);
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .arrow-right {
+            color: #aab3bd;
+            flex-shrink: 0;
+        }
+
+        /* Numbered Step List */
+        .num-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 13.5px;
+            color: var(--text-secondary);
+        }
+
+        .num-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .num-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .num-circle.icon-emerald, .num-circle.icon-sky, .num-circle.icon-amber,
+        .num-circle.icon-purple, .num-circle.icon-muted {
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+        }
+
+        /* Code Badge */
+        .copy-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 7px;
+            margin: 1px 0;
+            border-radius: 5px;
+            background: var(--bg-code);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            vertical-align: baseline;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .copy-chip:hover {
+            background: var(--accent-soft);
+        }
+
+        .copy-chip:active {
+            transform: scale(0.96);
+        }
+
+        /* Callout / Warning Box */
+        .callout {
+            margin-top: 14px;
+            padding: 11px 13px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.6;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-option);
+            color: var(--text-secondary);
+        }
+
+        .callout-title {
+            font-weight: 700;
+            margin-bottom: 3px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .callout-amber { background: var(--amber-soft); border-color: var(--amber-border); }
+        .callout-rose { background: var(--rose-soft); border-color: var(--rose-border); }
+        .callout-sky { background: var(--accent-soft); border-color: var(--accent-border); }
+        .callout-emerald { background: var(--green-soft); border-color: var(--green-border); }
+
+        /* Path Panel & 2-Column Grid */
+        .path-box {
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            font-size: 12px;
+            margin-bottom: 14px;
+        }
+
+        .path-chain {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+            margin-top: 6px;
+        }
+
+        .tag-rec {
+            display: inline-block;
+            margin: 0 4px;
+            padding: 0 5px;
+            border-radius: 4px;
+            font-size: 10.5px;
+            font-weight: 600;
+            line-height: 16px;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            vertical-align: 1px;
+        }
+
+        .dl-link {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-border);
+        }
+
+        .dl-link:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        .perm-note {
+            padding: 9px 11px;
+            margin: 9px 0 0;
+            border-radius: 6px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            border-left: 2px solid var(--accent-border);
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .mini-panel {
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            font-size: 12px;
+        }
+
+        .sub-card {
+            padding: 14px;
+            border-radius: 9px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 12px;
+        }
+
+        .sub-card:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Primary Action Buttons */
+        .btn-primary {
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px 16px;
+            border-radius: 9px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #ffffff;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.15s, transform 0.12s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dark);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.99);
+        }
+
+        .btn-emerald, .btn-amber, .btn-sky, .btn-purple {
+            background: var(--accent);
+        }
+
+        .btn-emerald:hover, .btn-amber:hover, .btn-sky:hover, .btn-purple:hover {
+            background: var(--accent-dark);
+        }
+
+        /* Footer Nav & Share */
+        .footer {
+            padding-top: 6px;
+            padding-bottom: 24px;
+        }
+
+        .nav-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .nav-row.hidden {
+            display: none;
+        }
+
+        .btn-nav {
+            padding: 10px 14px;
+            border-radius: 9px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-nav:hover {
+            background: var(--bg-option-hover);
+        }
+
+        .btn-nav.flex-1 {
+            flex: 1;
+        }
+
+        .btn-nav.muted {
+            background: transparent;
+            color: var(--text-muted);
+        }
+
+        .share-bar {
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .share-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .share-text strong {
+            display: block;
+            color: var(--text-primary);
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        .btn-share {
+            padding: 8px 12px;
+            border-radius: 7px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-share:hover {
+            background: #e3ecf4;
+        }
+
+        /* Troubleshoot Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(24, 32, 42, 0.38);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        @media (min-width: 540px) {
+            .modal-backdrop {
+                align-items: center;
+                padding: 16px;
+            }
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 520px;
+            max-height: 84vh;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 14px 14px 0 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeUp 0.2s ease-out;
+        }
+
+        @media (min-width: 540px) {
+            .modal-box {
+                border-radius: 12px;
+            }
+        }
+
+        .modal-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 16px 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            font-size: 12.5px;
+            color: var(--text-secondary);
+        }
+
+        .faq-q {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .modal-footer {
+            padding: 12px 18px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 76px;
+            left: 50%;
+            transform: translate(-50%, 8px);
+            z-index: 60;
+            padding: 9px 16px;
+            border-radius: 999px;
+            background: #2b3440;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(22, 32, 45, 0.18);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s, transform 0.18s;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .text-emerald { color: var(--green); }
+        .text-sky { color: var(--accent); }
+        .text-amber { color: var(--amber); }
+        .text-purple { color: var(--slate); }
+        .text-rose { color: var(--rose); }
+        .text-white { color: var(--text-primary); }
+        .fw-bold { font-weight: 700; }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+    </style>
+</head>
+<body>
+
+    <!-- Top Header -->
+    <header class="header">
+        <div class="container header-inner">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 12h5l-3 6h12l-3-6h5L12 2z"/><path d="M12 18v4"/></svg>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="terraria-save-path-zh-cn.html" class="btn-pill btn-amber-soft" style="text-decoration:none;font-weight:700;" title="切换为中文">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <span>中文</span>
+                    </a>
+                    <button type="button" onclick="toggleTroubleshootModal(true)" class="btn-pill btn-amber-soft">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>Troubleshooting</span>
+                    </button>
+                    <button type="button" onclick="resetWizard()" title="Restart" class="btn-pill btn-icon-only" aria-label="Restart">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="progress-track">
+                <div id="progress-bar" class="progress-fill" style="width: 15%;"></div>
+            </div>
+
+            <div id="breadcrumb-container" class="breadcrumbs"></div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container main">
+        <div id="step-container"></div>
+    </main>
+
+    <!-- Footer Navigation & Share -->
+    <footer class="container footer">
+        <div id="nav-controls" class="nav-row hidden">
+            <button type="button" onclick="goBack()" class="btn-nav flex-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span>Back</span>
+            </button>
+            <button type="button" onclick="resetWizard()" class="btn-nav muted">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span>Restart</span>
+            </button>
+        </div>
+
+        <div class="share-bar">
+            <div class="share-text">
+                <strong>Need to share this tutorial?</strong>
+                <span>Copy concise text guide to share with others</span>
+            </div>
+            <button type="button" onclick="copySummaryText()" class="btn-share">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span>Copy Guide</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Troubleshooting Modal -->
+    <div id="troubleshoot-modal" class="modal-backdrop" onclick="if(event.target===this) toggleTroubleshootModal(false)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="fw-bold text-white" style="font-size:15px;">Frequently Asked Questions & Troubleshooting</span>
+                <button type="button" onclick="toggleTroubleshootModal(false)" style="padding:4px 8px;color:#6b7581;font-size:16px;" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                                <div class="faq-item">
+                    <div class="faq-q">1. Can't find the numeric XD ID folder? (Or no numeric folder in Global edition?)</div>
+                    <div>
+                        • <strong class="text-emerald">XD Edition (TapTap)</strong>: You must launch the game, log into your account, and in the save interface, <strong class="text-white">download your cloud save to local</strong> (or create a new local character/world) to generate the numeric ID folder.<br>
+                        • <strong class="text-sky">Global Edition</strong>: By design, it <strong class="text-white">DOES NOT have a numeric ID folder</strong>! Open the game folder and you will directly see <code>Players</code> and <code>Worlds</code>.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#9a4f56;">2. Game crashes or black screen after replacing patch files?</div>
+                    <div>
+                        100% caused by <strong class="text-white">a version mismatch between the patch and the game</strong> (e.g., game was updated but the patch is for an older version). Please verify the game version supported by the patch, or reinstall the game to restore clean files.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#3c6287;">3. Placed save files but cannot see them in-game?</div>
+                    <div>
+                        Check three points: ① Never place files in the <code>OldSaves</code> folder; ② Worlds (<code>.wld</code>) must go into <code>Worlds</code>/<code>world</code>, Characters (<code>.plr</code>) into <code>Players</code>/<code>player</code>; ③ Completely swipe away the game from recent apps and restart it.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#8a6a3a;">4. Connected phone to PC via USB, but Android/data is empty?</div>
+                    <div>
+                        Since Android 11, the OS blocks computer access to <code>Android/data</code>, so seeing an empty folder is normal. Copy files into your phone's <code>Download</code> folder first, then use a phone file manager (like MT Manager) to move them into the game folder. If data is inaccessible, grant permission via Shizuku.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#5d5a86;">5. Connected iPhone to PC, but Terraria doesn't show in Finder / iTunes?</div>
+                    <div>
+                        Unlock your iPhone and tap <strong class="text-white">Trust</strong> on the prompt. On macOS, select your device in Finder and click the <strong class="text-white">Files</strong> tab. On Windows, install iTunes or Apple Devices app and open <strong class="text-white">File Sharing</strong>. Only apps supporting document storage will be listed.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" style="color:#5d5a86;">6. How to identify save files by extension?</div>
+                    <div>
+                        • <code>.wld</code> = World save (place in Worlds / world)<br>
+                        • <code>.plr</code> = Character save (place in Players / player)<br>
+                        • <code>.bak / .bak2</code> = Automatic backups (delete .bak extension to use as a live save)<br>
+                        • <code>global-metadata.dat</code> = Core engine patch (Android only)
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="toggleTroubleshootModal(false)" class="btn-primary btn-emerald" style="margin-top:0;">Got it, back to guide</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Copied to clipboard</div>
+
+    <script>        const state = {
+            history: ['start'],
+            platform: null,     // 'mobile' | 'pc'
+            os: null,           // 'android' | 'ios'
+            edition: null,      // 'xd' | 'normal'
+            goal: null,         // 'save' | 'patch' | 'editor' | 'mod'
+            hasDataPerm: null   // true | false
+        };
+
+        const ICONS = {
+            arrowRight: `<svg class="arrow-right" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+            nextBtn: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
+            copyMini: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+            android: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="14" height="10" rx="2"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/><line x1="9" y1="3" x2="7" y2="5"/><line x1="15" y1="3" x2="17" y2="5"/></svg>`,
+            apple: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-1.5 0-3 1-3 2.5 1.5 0 3-1 3-2.5z"/><path d="M16.5 13.5c0-2.2 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.8-1.3-.1-2.6.8-3.3.8-.7 0-1.7-.8-2.8-.8-1.5 0-2.8.9-3.6 2.2-1.5 2.7-.4 6.6 1.1 8.8.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7 1.3 0 1.7.7 2.8.7 1.2 0 1.9-1 2.6-2.1.8-1.2 1.2-2.4 1.2-2.4-.1 0-2.2-.9-2.2-3.4z"/></svg>`,
+            monitor: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+            heart: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+            globe: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+            folder: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+            wand: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8L19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2L19 5"/><path d="M3 21l9-9"/><path d="M12.2 6.2L11 5"/></svg>`,
+            sliders: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,
+            check: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+            lock: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+            download: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+            usb: `<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="20" r="1.6"/><path d="M12 18.4V4"/><path d="M9 7l3-3 3 3"/><path d="M12 10l-4 3v3"/><path d="M12 13l4 2.5v2.5"/></svg>`
+        };
+
+        function codeBadge(text) {
+            const safe = text.replace(/'/g, "\\'");
+            return `<button type="button" onclick="copyText('${safe}')" title="Copy" class="copy-chip"><span>${text}</span>${ICONS.copyMini}</button>`;
+        }
+
+        function warningBox(title, content, type = 'amber') {
+            return `
+                <div class="callout callout-${type}">
+                    <div class="callout-title">${title}</div>
+                    <div>${content}</div>
+                </div>
+            `;
+        }
+
+        function getEditionMeta() {
+            const isXD = state.edition === 'xd';
+            return {
+                isXD,
+                name: isXD ? 'TapTap / XD Edition' : 'Global Edition',
+                androidPkg: isXD ? 'com.xd.terraria' : 'com.and.games505.TerrariaPaid',
+                worldDir: isXD ? 'world' : 'Worlds',
+                playerDir: isXD ? 'player' : 'Players'
+            };
+        }
+
+        const steps = {
+            'start': {
+                progress: 15,
+                crumb: 'Platform',
+                render: () => `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">Step 1 · Choose Platform & Edition</span>
+                        </div>
+                        <h2 class="card-title">Which edition of Terraria are you playing?</h2>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectPlatform('mobile','xd')" class="option-btn hover-amber">
+                                <div class="option-left">
+                                    <div class="option-icon icon-amber">${ICONS.heart}</div>
+                                    <div>
+                                        <div class="option-title">Mobile: TapTap / XD Edition</div>
+                                        <div class="option-sub">China XD release on Android / iOS</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectPlatform('mobile','normal')" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.globe}</div>
+                                    <div>
+                                        <div class="option-title">Mobile: Global Edition</div>
+                                        <div class="option-sub">App Store or Google Play release (505 Games)</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectPlatform('pc')" class="option-btn hover-sky">
+                                <div class="option-left">
+                                    <div class="option-icon icon-sky">${ICONS.monitor}</div>
+                                    <div>
+                                        <div class="option-title">PC: Steam Edition</div>
+                                        <div class="option-sub">Installed via Steam (Windows / macOS / Linux)</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+                    </div>
+                `
+            },
+
+            'select_os': {
+                progress: 30,
+                crumb: 'OS',
+                render: () => {
+                    const meta = getEditionMeta();
+                    return `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-amber">${meta.name} · Step 2</span>
+                        </div>
+                        <h2 class="card-title">What OS does your mobile device run?</h2>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectOS('android')" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.android}</div>
+                                    <div>
+                                        <div class="option-title">Android / HarmonyOS</div>
+                                        <div class="option-sub">Samsung, Xiaomi, Pixel, OnePlus, Huawei, etc.</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectOS('ios')" class="option-btn hover-sky">
+                                <div class="option-left">
+                                    <div class="option-icon icon-sky">${ICONS.apple}</div>
+                                    <div>
+                                        <div class="option-title">Apple (iOS / iPadOS)</div>
+                                        <div class="option-sub">iPhone or iPad</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }
+            },
+
+            'select_goal': {
+                progress: 45,
+                crumb: 'Goal',
+                render: () => {
+                    const isAndroid = state.os === 'android';
+                    const meta = getEditionMeta();
+                    return `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">${meta.name} · Step 3</span>
+                        </div>
+                        <h2 class="card-title">What would you like to do?</h2>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectGoal('save')" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.folder}</div>
+                                    <div>
+                                        <div class="option-title">Import / Export Saves (Worlds & Characters)</div>
+                                        <div class="option-sub">All-item maps, player characters, backups</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectGoal('patch')" class="option-btn ${isAndroid ? 'hover-purple' : 'hover-amber'}">
+                                <div class="option-left">
+                                    <div class="option-icon ${isAndroid ? 'icon-purple' : 'icon-muted'}">${ICONS.wand}</div>
+                                    <div>
+                                        <div class="option-title">
+                                            <span>Install Game Patches (First Fractal, etc.)</span>
+                                            ${!isAndroid ? '<span class="tag-mini tag-rose">Android Only</span>' : ''}
+                                        </div>
+                                        <div class="option-sub">
+                                            ${isAndroid
+                                                ? 'Replace core metadata files'
+                                                : 'Not supported on iOS. Tap to see reasons & alternatives'
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectGoal('editor')" class="option-btn hover-sky">
+                                <div class="option-left">
+                                    <div class="option-icon icon-sky">${ICONS.sliders}</div>
+                                    <div>
+                                        <div class="option-title">Use Save Editor (Modify Items & Stats)</div>
+                                        <div class="option-sub">
+                                            ${isAndroid
+                                                ? 'Mobile save editor app'
+                                                : 'Web-based save editor (No jailbreak)'
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }
+            },
+
+            'pc_goal': {
+                progress: 45,
+                crumb: 'Goal',
+                render: () => `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-sky">PC Steam · Step 2</span>
+                        </div>
+                        <h2 class="card-title">What would you like to do?</h2>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectPcGoal('save')" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.folder}</div>
+                                    <div>
+                                        <div class="option-title">Import / Export Saves</div>
+                                        <div class="option-sub">Add or extract world and player files</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectPcGoal('editor')" class="option-btn hover-sky">
+                                <div class="option-left">
+                                    <div class="option-icon icon-sky">${ICONS.sliders}</div>
+                                    <div>
+                                        <div class="option-title">Use Save Editor (Edit Items & Stats)</div>
+                                        <div class="option-sub">Modify player stats or world maps</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectPcGoal('mod')" class="option-btn hover-purple">
+                                <div class="option-left">
+                                    <div class="option-icon icon-purple">${ICONS.wand}</div>
+                                    <div>
+                                        <div class="option-title">Install Mods (tModLoader)</div>
+                                        <div class="option-sub">Enable Steam Workshop mods</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+                    </div>
+                `
+            },
+
+            'pc_final': {
+                progress: 100,
+                crumb: 'Finish',
+                render: () => {
+                    if (state.goal === 'editor') {
+                        return `
+                        <div class="card card-sky">
+                            <div class="badge-row">
+                                <span class="step-badge badge-sky">Final Step · PC Save Editor</span>
+                            </div>
+                            <h2 class="card-title">Edit Character & World Saves</h2>
+                            <div class="path-box">
+                                <div>Characters are in ${codeBadge('Players')}, and worlds are in ${codeBadge('Worlds')}. Please <strong class="text-white">fully exit the game</strong> before editing, then open the save directory for your OS:</div>
+                                <div class="path-chain" style="margin-top:8px;">
+                                    <span style="color:var(--text-muted);">Windows</span> ${codeBadge('%USERPROFILE%\\Documents\\My Games\\Terraria')}
+                                </div>
+                                <div class="path-chain">
+                                    <span style="color:var(--text-muted);">macOS</span> ${codeBadge('~/Library/Application Support/Terraria')}
+                                </div>
+                                <div class="path-chain">
+                                    <span style="color:var(--text-muted);">Linux</span> ${codeBadge('~/.local/share/Terraria')}
+                                </div>
+                                <div style="color:var(--text-muted);margin-top:8px;">macOS: Press ⌘⇧G to Go to Folder; Linux: Press Ctrl+L in file manager. These directories are hidden by default.</div>
+                            </div>
+
+                            <div class="sub-card">
+                                <div class="fw-bold text-sky" style="margin-bottom:6px;">Method 1: Web-based Terrasavr (Edit Characters)</div>
+                                <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                    1. Open <code>Terrasavr</code> in your browser.<br>
+                                    2. Click <strong class="text-primary">Load</strong>, select the <code>.plr</code> file from the <code>Players</code> folder.<br>
+                                    3. Add items, adjust HP/Mana, then click <strong class="text-primary">Save</strong> to overwrite the original file in <code>Players</code>.<br>
+                                    4. Restart the game to see the modified character.
+                                </div>
+                            </div>
+
+                            <div class="sub-card">
+                                <div class="fw-bold text-primary" style="margin-bottom:6px;">Method 2: Desktop TEdit (Edit Worlds)</div>
+                                <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                    Download and run <code>TEdit</code>. Open any <code>.wld</code> map from the <code>Worlds</code> folder to modify tiles and chest contents, save, and launch the game.
+                                </div>
+                            </div>
+
+                            ${warningBox('Backup Before Editing', 'Copy your original <code>.plr</code> or <code>.wld</code> file to a backup folder beforehand in case the save file becomes corrupted.', 'amber')}
+                        </div>
+                        `;
+                    }
+
+                    if (state.goal === 'mod') {
+                        return `
+                        <div class="card card-purple">
+                            <div class="badge-row">
+                                <span class="step-badge badge-purple">Final Step · PC Mod Setup</span>
+                            </div>
+                            <h2 class="card-title">Launch with tModLoader & Enable Mods</h2>
+
+                            <ol class="num-list">
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">1</span>
+                                    <div>Search for <code>tModLoader</code> in the Steam Store and install it (free to play, requires owning Terraria).</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">2</span>
+                                    <div>Find mods on the Steam Workshop, click <strong class="text-white">Subscribe</strong>, and wait for downloads to complete.</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">3</span>
+                                    <div>Launch <strong class="text-purple">tModLoader</strong> from Steam (not vanilla Terraria), go to <strong class="text-white">Manage Mods</strong>, enable them, and click <strong class="text-white">Reload Mods</strong>.</div>
+                                </li>
+                            </ol>
+
+                            ${warningBox('Multiplayer & Versions', 'In multiplayer, all players must have the exact same mods enabled. If the game crashes after an update, verify mod and game version compatibility.', 'amber')}
+                        </div>
+                        `;
+                    }
+
+                    return `
+                    <div class="card card-emerald">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">Final Step · PC Import / Export Saves</span>
+                        </div>
+                        <h2 class="card-title">Place Saves into Worlds / Players Folders</h2>
+                        <div class="path-box">
+                            <div>First <strong class="text-white">completely exit the game</strong>, then open the save directory according to your OS:</div>
+                            <div class="path-chain" style="margin-top:8px;">
+                                <span style="color:var(--text-muted);">Windows</span> ${codeBadge('%USERPROFILE%\\Documents\\My Games\\Terraria')}
+                            </div>
+                            <div class="path-chain">
+                                <span style="color:var(--text-muted);">macOS</span> ${codeBadge('~/Library/Application Support/Terraria')}
+                            </div>
+                            <div class="path-chain">
+                                <span style="color:var(--text-muted);">Linux</span> ${codeBadge('~/.local/share/Terraria')}
+                            </div>
+                            <div style="color:var(--text-muted);margin-top:8px;">macOS: ⌘⇧G to Go to Folder; Linux: Ctrl+L in file manager. Ensure hidden files are visible.</div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="mini-panel">
+                                <div class="fw-bold text-emerald" style="margin-bottom:4px;">World Folder</div>
+                                <div>Folder: ${codeBadge('Worlds')}</div>
+                                <div style="color:var(--text-muted);margin-top:4px;">For files ending with <code>.wld</code></div>
+                            </div>
+                            <div class="mini-panel">
+                                <div class="fw-bold text-sky" style="margin-bottom:4px;">Character Folder</div>
+                                <div>Folder: ${codeBadge('Players')}</div>
+                                <div style="color:var(--text-muted);margin-top:4px;">For files ending with <code>.plr</code></div>
+                            </div>
+                        </div>
+
+                        <ol class="num-list">
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">In</span>
+                                <div><strong class="text-white">Import Saves:</strong> Put downloaded <code>.wld</code> files into <code>Worlds</code> and <code>.plr</code> files into <code>Players</code>. Launch Terraria to play.</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-sky">Out</span>
+                                <div><strong class="text-white">Export Saves:</strong> Simply copy <code>.wld</code> or <code>.plr</code> files out of these folders to share or backup.</div>
+                            </li>
+                        </ol>
+
+                        ${warningBox('Steam Cloud & Backup Files', 'If Steam Cloud is enabled, newly replaced files may get overwritten by the cloud version. Temporarily disable Steam Cloud in game properties if this occurs. Files ending with <code>.bak</code> / <code>.bak2</code> are automatic backups; remove the <code>.bak</code> extension to restore them.', 'sky')}
+                    </div>
+                    `;
+                }
+            },
+
+            'android_prep': {
+                progress: 56,
+                crumb: 'Prep',
+                render: () => {
+                    const isPatch = state.goal === 'patch';
+                    const isEditor = state.goal === 'editor';
+                    const isSave = state.goal === 'save';
+                    const meta = getEditionMeta();
+
+                    const pathLine = `${codeBadge('Android')} <span>→</span> ${codeBadge('data')} <span>→</span> ${codeBadge(meta.androidPkg)}`;
+                    const innerLine = meta.isXD
+                        ? `Then enter the <strong class="text-amber">numeric XD ID folder</strong> to find ${codeBadge(meta.worldDir)} (Worlds) and ${codeBadge(meta.playerDir)} (Players).`
+                        : `Inside, you will directly see ${codeBadge(meta.worldDir)} (Worlds) and ${codeBadge(meta.playerDir)} (Players).`;
+
+                    const pathBlock = `
+                        <div class="path-box" style="margin:10px 0 0;">
+                            <div class="path-chain" style="margin-top:0;">${pathLine}</div>
+                            <div style="margin-top:6px;">${innerLine}</div>
+                        </div>`;
+
+                    const installStep = `Install a file manager capable of accessing <code>Android/data</code>. We recommend <strong class="text-white">MT Manager</strong><span class="tag-rec">Recommended</span> (<a class="dl-link" href="https://mt2.cn/download/" target="_blank" rel="noopener">Official Site</a>) or <strong class="text-white">ZArchiver</strong>. Launch it once after installing and grant storage permissions.`;
+
+                    const fileStep = isPatch
+                        ? `Download your patch files onto your device (via browser, cloud drive, or chat app).`
+                        : `Download your save files (.wld / .plr) onto your device; skip this if you only want to export your own saves.`;
+
+                    const permNote = `
+                        <div class="perm-note">
+                            Modern Android restricts third-party apps from directly writing to <code>Android/data</code>. The next step will verify your permission status.
+                        </div>`;
+
+                    const lastStep = isPatch
+                        ? `Locate the downloaded patch file in your file manager, ready to copy to the game folder.${permNote}`
+                        : `Open your file manager and navigate towards the game path below.${permNote}${pathBlock}`;
+
+                    if (isEditor) {
+                        return `
+                        <div class="card">
+                            <div class="badge-row">
+                                <span class="step-badge badge-emerald">${meta.name} · Preparation</span>
+                            </div>
+                            <h2 class="card-title">Download Editor & Management Tools</h2>
+
+                            <ol class="num-list">
+                                <li class="num-item">
+                                    <span class="num-circle icon-emerald">1</span>
+                                    <div>${installStep}</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-emerald">2</span>
+                                    <div>Download and install a <strong class="text-sky">Terraria Save Editor</strong> app (Android 11+ devices also require <strong class="text-amber">Shizuku</strong>).</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-emerald">3</span>
+                                    <div>Open the editor app once to ensure it launches correctly.${permNote}</div>
+                                </li>
+                            </ol>
+
+                            ${warningBox('Backup Reminder', 'Always copy your original <code>.plr</code> / <code>.wld</code> files to another folder before editing in case of corruption.', 'amber')}
+
+                            <button type="button" onclick="goTo('android_check_perm')" class="btn-primary btn-emerald">
+                                <span>Ready, Check Directory Permissions</span>
+                                ${ICONS.nextBtn}
+                            </button>
+                        </div>
+                        `;
+                    }
+
+                    return `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">${meta.name} · Preparation</span>
+                        </div>
+                        <h2 class="card-title">${isSave ? 'Locate Save Directory & Tools' : 'Download Patch & File Manager'}</h2>
+
+                        <ol class="num-list">
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">1</span>
+                                <div>${installStep}</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">2</span>
+                                <div>${fileStep}</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">3</span>
+                                <div>${lastStep}</div>
+                            </li>
+                        </ol>
+
+                        ${warningBox('Dual-Pane Tip', 'MT Manager features <strong>two independent panes</strong>: Keep downloaded files on one side, and open the game folder on the other side. Do not change the source pane once navigated.', 'sky')}
+
+                        <button type="button" onclick="goTo('android_check_perm')" class="btn-primary btn-emerald">
+                            <span>Ready, Check Directory Permissions</span>
+                            ${ICONS.nextBtn}
+                        </button>
+                    </div>
+                    `;
+                }
+            },
+
+            'android_check_perm': {
+                progress: 66,
+                crumb: 'Permission',
+                render: () => `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">Android / HarmonyOS · Access Check</span>
+                        </div>
+                        <h2 class="card-title">Check Android/data Access Permission</h2>
+                        <p class="card-desc">
+                            In your file manager, navigate to: ${codeBadge('Android')} → ${codeBadge('data')}
+                        </p>
+
+                        ${warningBox('Important', 'Make sure to tap <strong>Android</strong> without a leading dot, not <code>.Android</code>!', 'amber')}
+
+                        <p class="fw-bold text-white mt-3" style="margin-bottom:10px;">What happens when you open the data folder?</p>
+
+                        <div class="option-list">
+                            <button type="button" onclick="selectDataPerm(true)" class="option-btn hover-emerald">
+                                <div class="option-left">
+                                    <div class="option-icon icon-emerald">${ICONS.check}</div>
+                                    <div>
+                                        <div class="option-title">I can see all package folders normally</div>
+                                        <div class="option-sub">Common on older Android or HarmonyOS. Skip authorization!</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+
+                            <button type="button" onclick="selectDataPerm(false)" class="option-btn hover-amber">
+                                <div class="option-left">
+                                    <div class="option-icon icon-amber">${ICONS.lock}</div>
+                                    <div>
+                                        <div class="option-title">Shows "Access Denied" or appears empty</div>
+                                        <div class="option-sub">Follow next step to unlock via Shizuku</div>
+                                    </div>
+                                </div>
+                                ${ICONS.arrowRight}
+                            </button>
+                        </div>
+                    </div>
+                `
+            },
+
+            'shizuku_guide': {
+                progress: 82,
+                crumb: 'Shizuku',
+                render: () => `
+                    <div class="card">
+                        <div class="badge-row">
+                            <span class="step-badge badge-amber">Android / HarmonyOS · Unlock Data</span>
+                        </div>
+                        <h2 class="card-title">Unlock Android/data Using Shizuku</h2>
+
+                        <div class="path-box">
+                            <div style="color:#6b7581;">Setup steps vary across device brands. Follow the official guide:</div>
+                            <div style="margin-top:6px;">
+                                <a class="dl-link" href="https://shizuku.rikka.app/" target="_blank" rel="noopener">shizuku.rikka.app</a>
+                            </div>
+                        </div>
+
+                        <ol class="num-list">
+                            <li class="num-item">
+                                <span class="num-circle icon-amber">1</span>
+                                <div>Follow the official instructions to pair and start Shizuku until it displays <strong class="text-emerald">Shizuku is running</strong>.</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-amber">2</span>
+                                <div>Tap <strong class="text-white">Authorized Applications</strong>, toggle ON for <strong class="text-emerald">MT Manager</strong> (or ZArchiver). Also enable it for your <strong class="text-sky">Save Editor</strong> if installed.</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-amber">3</span>
+                                <div><strong class="text-amber">Force close and reopen your file manager</strong>, navigate to ${codeBadge('Android')} → ${codeBadge('data')}, and all app folders will now appear!</div>
+                            </li>
+                        </ol>
+
+                        <button type="button" onclick="goTo('android_final')" class="btn-primary btn-emerald">
+                            <span>Data is accessible, proceed to final step</span>
+                            ${ICONS.nextBtn}
+                        </button>
+                    </div>
+                `
+            },
+
+            'android_final': {
+                progress: 100,
+                crumb: 'Finish',
+                render: () => {
+                    const meta = getEditionMeta();
+
+                    if (state.goal === 'patch') {
+                        return `
+                        <div class="card card-purple">
+                            <div class="badge-row">
+                                <span class="step-badge badge-purple">Final Step · ${meta.name} Patch</span>
+                            </div>
+                            <h2 class="card-title">Replace Core Patch Files</h2>
+                            <p class="card-desc">In MT Manager, on the <strong class="text-white">target pane</strong> (inside data), open:</p>
+
+                            <div class="path-box">
+                                <div style="color:#6b7581;">Navigate into this directory path:</div>
+                                <div class="path-chain">
+                                    ${codeBadge(meta.androidPkg)} <span>→</span>
+                                    ${codeBadge('files')} <span>→</span>
+                                    ${codeBadge('il2cpp')} <span>→</span>
+                                    ${codeBadge('Metadata')}
+                                </div>
+                                <div style="font-size:11px;color:#6b7581;margin-top:6px;">Note: The patch directory has no numeric ID folder; both editions use this exact structure.</div>
+                            </div>
+
+                            <ol class="num-list">
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">1</span>
+                                    <div>Inside ${codeBadge('Metadata')}, you will see an existing file with the same name as your patch (usually ${codeBadge('global-metadata.dat')}).</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">2</span>
+                                    <div>On the <strong class="text-emerald">other pane</strong> (where your downloaded patch file is), long-press the file and select <strong class="text-white">Copy</strong> or <strong class="text-white">Move</strong> to Metadata.</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-purple">3</span>
+                                    <div>Choose <strong class="text-purple">Replace / Overwrite</strong> when prompted. Restart the game to activate the patch!</div>
+                                </li>
+                            </ol>
+
+                            ${warningBox('Prevent Game Crashes', 'Always create a backup copy of the original <code>global-metadata.dat</code> first. If the game crashes on startup, the patch version does not match your game version.', 'amber')}
+                        </div>
+                        `;
+                    }
+
+                    if (state.goal === 'editor') {
+                        const pathTip = meta.isXD
+                            ? `Path: <code>Android / data / ${meta.androidPkg} / [Numeric XD ID] / world or player</code>`
+                            : `Path: <code>Android / data / ${meta.androidPkg} / Worlds or Players</code> (Directly inside, no numeric ID folder)`;
+
+                        return `
+                        <div class="card card-sky">
+                            <div class="badge-row">
+                                <span class="step-badge badge-sky">Final Step · ${meta.name} Save Editor</span>
+                            </div>
+                            <h2 class="card-title">Modify Items & Character Stats on Android</h2>
+
+                            <ol class="num-list">
+                                <li class="num-item">
+                                    <span class="num-circle icon-sky">1</span>
+                                    <div>Open the installed <strong class="text-sky">Terraria Save Editor</strong> app (if prompted for Shizuku access, tap <strong class="text-emerald">Always Allow</strong>).</div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-sky">2</span>
+                                    <div>
+                                        In the editor, choose to load a character (<code>.plr</code>) or world (<code>.wld</code>):<br>
+                                        <span style="font-size:12px;color:#6b7581;display:inline-block;margin-top:4px;">${pathTip}</span>
+                                    </div>
+                                </li>
+                                <li class="num-item">
+                                    <span class="num-circle icon-sky">3</span>
+                                    <div>Edit items, boost max HP/mana, or modify prefixes, then tap <strong class="text-white">Save</strong>. Relaunch Terraria to see changes!</div>
+                                </li>
+                            </ol>
+                        </div>
+                        `;
+                    }
+
+                    const step2Desc = meta.isXD
+                        ? `2. Tap into the <strong class="text-amber">purely numeric folder</strong> (this is your XD account ID; multiple folders mean multiple logged-in accounts).`
+                        : `2. <strong class="text-emerald">Note: Global edition has NO numeric folder!</strong> Inside the package folder, you immediately see ${codeBadge('Worlds')} and ${codeBadge('Players')}.`;
+
+                    return `
+                    <div class="card card-emerald">
+                        <div class="badge-row">
+                            <span class="step-badge badge-emerald">Final Step · ${meta.name} Import / Export</span>
+                        </div>
+                        <h2 class="card-title">Put Saves into Worlds / Players Folder</h2>
+                        <p class="card-desc">In MT Manager on the target pane (inside data):</p>
+
+                        <div class="path-box">
+                            <div>1. Open the game package folder: ${codeBadge(meta.androidPkg)}</div>
+                            <div style="margin-top:6px;">${step2Desc}</div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="mini-panel">
+                                <div class="fw-bold text-emerald" style="margin-bottom:4px;">World Folder</div>
+                                <div>Name: ${codeBadge(meta.worldDir)}</div>
+                                <div style="color:#6b7581;margin-top:4px;">For files ending with <code>.wld</code></div>
+                            </div>
+                            <div class="mini-panel">
+                                <div class="fw-bold text-sky" style="margin-bottom:4px;">Player Folder</div>
+                                <div>Name: ${codeBadge(meta.playerDir)}</div>
+                                <div style="color:#6b7581;margin-top:4px;">For files ending with <code>.plr</code></div>
+                            </div>
+                        </div>
+
+                        <ol class="num-list">
+                            <li class="num-item">
+                                <span class="num-circle icon-emerald">In</span>
+                                <div><strong class="text-white">Import Saves:</strong> On the opposite pane where your downloaded files are, long-press the file and choose <strong class="text-emerald">Copy / Move</strong> into <code>${meta.worldDir}</code> or <code>${meta.playerDir}</code>.</div>
+                            </li>
+                            <li class="num-item">
+                                <span class="num-circle icon-sky">Out</span>
+                                <div><strong class="text-white">Export Saves:</strong> Long-press any <code>.wld</code> or <code>.plr</code> file and choose <strong class="text-sky">Share</strong> to send or backup.</div>
+                            </li>
+                        </ol>
+
+                        ${warningBox(
+                            meta.isXD ? 'Cloud Saves & .bak Backup Info' : '.bak Backup Recovery Info',
+                            `${meta.isXD ? '① XD cloud saves must be <strong>downloaded to local in-game first</strong> before they appear in the numeric folder;<br>② ' : ''}Files ending in <code>.wld.bak</code> or <code>.bak2</code> are automatic system backups. Simply remove the <code>.bak</code> suffix to restore them as normal saves!`,
+                            'sky'
+                        )}
+                    </div>
+                    `;
+                }
+            },
+
+            'ios_final': {
+                progress: 100,
+                crumb: 'iOS Guide',
+                render: () => {
+                    const meta = getEditionMeta();
+
+                    if (state.goal === 'patch') {
+                        return `
+                        <div class="card card-rose">
+                            <div class="badge-row">
+                                <span class="step-badge badge-rose">Apple iOS · Patch Notice</span>
+                            </div>
+                            <h2 class="card-title">Core Patches (First Fractal, etc.) are Unsupported on iOS</h2>
+                            <p class="card-desc" style="color:var(--text-secondary);">
+                                Due to iOS sandbox security, users cannot access internal app code directories (no <code>il2cpp/Metadata</code> folder exists). Therefore, <strong class="text-rose">core game binary patches cannot be installed on iOS</strong> (no MT Manager is needed).
+                            </p>
+
+                            <div class="sub-card">
+                                <div class="fw-bold text-emerald" style="margin-bottom:6px;">iOS Alternatives (Get all items easily):</div>
+                                <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.6;">
+                                    1. <strong class="text-white">Directly import All-Item Worlds or Characters</strong>: <code>.wld</code> and <code>.plr</code> saves are 100% supported on iOS without jailbreak!<br>
+                                    2. <strong class="text-white">Use Web Save Editor</strong>: Open <code>Terrasavr</code> in Safari to add any equipment or items directly into your character inventory.
+                                </div>
+                            </div>
+
+                            <div class="grid-2 mt-3" style="margin-bottom:0;">
+                                <button type="button" onclick="selectGoal('save')" class="btn-primary btn-sky" style="margin-top:0;font-size:12.5px;">Import All-Item Save</button>
+                                <button type="button" onclick="selectGoal('editor')" class="btn-primary btn-purple" style="margin-top:0;font-size:12.5px;">Web Editor Guide</button>
+                            </div>
+                        </div>
+                        `;
+                    }
+
+                    if (state.goal === 'editor') {
+                        const iosSavePath = meta.isXD
+                            ? `On My iPhone / Terraria / [Numeric XD ID] / Players`
+                            : `On My iPhone / Terraria / Players`;
+
+                        return `
+                        <div class="card card-purple">
+                            <div class="badge-row">
+                                <span class="step-badge badge-purple">Apple ${meta.name} · Save Editor</span>
+                            </div>
+                            <h2 class="card-title">Modify Items & Character Stats (No Jailbreak)</h2>
+
+                            <div class="sub-card">
+                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                                    <span class="fw-bold text-purple">Method 1: Web-based Terrasavr (Recommended)</span>
+                                    <span class="tag-mini tag-emerald">Free & No Install</span>
+                                </div>
+                                <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                    1. Open Safari and go to ${codeBadge('Terrasavr')}.<br>
+                                    2. Click <strong class="text-white">Load</strong>, and browse to:<br>
+                                    <code>${iosSavePath}</code> to pick your <code>.plr</code> character file.<br>
+                                    3. Add any items to your inventory, change HP/mana or prefixes, then tap <strong class="text-white">Save</strong> to download.<br>
+                                    4. Move the newly saved <code>.plr</code> file back into the <code>Players</code> folder to replace it, then restart Terraria!
+                                </div>
+                            </div>
+
+                            <div class="sub-card">
+                                <div class="fw-bold text-white" style="margin-bottom:4px;">Method 2: App Store Editor</div>
+                                <div style="font-size:12px;color:var(--text-muted);line-height:1.55;">
+                                    Search for apps like <strong class="text-white">TR Save Editor</strong> on the App Store. Note that mobile store editors may have restricted feature sets.
+                                </div>
+                            </div>
+
+                            ${warningBox('Backup First', 'Before editing, duplicate your original <code>.plr</code> file in the Apple Files app as a backup to prevent data loss!', 'amber')}
+                        </div>
+                        `;
+                    }
+
+                    const pathStepsHtml = meta.isXD
+                        ? `<strong class="text-white">Browse</strong> → <strong class="text-white">On My iPhone</strong> → <strong class="text-emerald">Terraria</strong> → <strong class="text-amber">Numeric XD ID Folder</strong>`
+                        : `<strong class="text-white">Browse</strong> → <strong class="text-white">On My iPhone</strong> → <strong class="text-emerald">Terraria</strong> (<span class="text-emerald">Global edition has no numeric ID folder</span>; Players and Worlds are right inside)`;
+
+                    return `
+                    <div class="card card-sky">
+                        <div class="badge-row">
+                            <span class="step-badge badge-sky">Apple ${meta.name} · Import & Export</span>
+                        </div>
+                        <h2 class="card-title">Manage Saves via Apple "Files" App</h2>
+
+                        <div class="sub-card">
+                            <div class="fw-bold text-sky" style="margin-bottom:6px;">1. Import Saves into Game</div>
+                            <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                1. Download the save file on your device (maps end in ${codeBadge('.wld')}, characters in ${codeBadge('.plr')}). In the download share sheet, tap <strong class="text-sky">Save to Files</strong>.<br>
+                                2. Navigate to: ${pathStepsHtml}.<br>
+                                3. Put worlds into ${codeBadge('Worlds')} and characters into ${codeBadge('Players')}, tap <strong class="text-white">Save</strong> in top right. Finally, <strong class="text-sky">force close Terraria from recent apps and relaunch</strong>!
+                            </div>
+                        </div>
+
+                        <div class="sub-card">
+                            <div class="fw-bold text-emerald" style="margin-bottom:6px;">2. Export Saves to Share</div>
+                            <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.6;">
+                                Open the <strong class="text-sky">Files app</strong>, navigate along the same path into <code>Worlds</code> or <code>Players</code>, long-press the file and tap <strong class="text-emerald">Share</strong>.
+                            </div>
+                        </div>
+
+                        <div class="sub-card">
+                            <div class="fw-bold text-white" style="margin-bottom:6px;">3. Connect iPhone to PC via Cable (When Saves are on PC)</div>
+                            <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;">
+                                1. Connect iPhone to PC via USB cable. Tap <strong class="text-white">Trust This Computer</strong> on your iPhone and enter your passcode.<br>
+                                2. macOS: Open <strong class="text-white">Finder</strong>, select your iPhone on the sidebar, switch to the <strong class="text-white">Files</strong> tab. Windows: Open <strong class="text-white">iTunes</strong> (or Apple Devices app) → Device → <strong class="text-white">File Sharing</strong>.<br>
+                                3. Select <strong class="text-emerald">Terraria</strong> in the app list to reveal the Documents directory${meta.isXD ? ', then open the numeric XD ID folder' : ''}.<br>
+                                4. Drag ${codeBadge('.wld')} into ${codeBadge('Worlds')} and ${codeBadge('.plr')} into ${codeBadge('Players')}. Choose <strong class="text-white">Replace</strong> for existing files. Force close and relaunch the game.
+                            </div>
+                        </div>
+
+                        ${warningBox(
+                            'iOS Notice',
+                            `${meta.isXD ? '① XD cloud saves must be <strong>downloaded to local in-game first</strong> before they appear in Files;<br>② ' : ''}Never place files into the <code>OldSaves</code> folder, or the game will not detect them!`,
+                            'rose'
+                        )}
+                    </div>
+                    `;
+                }
+            }
+        };
+
+        function selectPlatform(platform, edition) {
+            state.platform = platform;
+            state.edition = edition || null;
+            state.os = null;
+            state.goal = null;
+            state.hasDataPerm = null;
+            goTo(platform === 'pc' ? 'pc_goal' : 'select_os');
+        }
+
+        function selectOS(os) {
+            state.os = os;
+            state.goal = null;
+            state.hasDataPerm = null;
+            goTo('select_goal');
+        }
+
+        function selectGoal(goal) {
+            state.goal = goal;
+            state.hasDataPerm = null;
+            goTo(state.os === 'android' ? 'android_prep' : 'ios_final');
+        }
+
+        function selectPcGoal(goal) {
+            state.goal = goal;
+            goTo('pc_final');
+        }
+
+        function selectDataPerm(hasPerm) {
+            state.hasDataPerm = hasPerm;
+            if (hasPerm) {
+                goTo('android_final');
+            } else {
+                goTo('shizuku_guide');
+            }
+        }
+
+        function goTo(stepId) {
+            if (state.history[state.history.length - 1] !== stepId) {
+                state.history.push(stepId);
+            }
+            renderCurrentStep();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            if (state.history.length > 1) {
+                state.history.pop();
+                renderCurrentStep();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function jumpToHistoryIndex(index) {
+            if (index >= 0 && index < state.history.length - 1) {
+                state.history = state.history.slice(0, index + 1);
+                renderCurrentStep();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function resetWizard() {
+            state.history = ['start'];
+            state.platform = null;
+            state.os = null;
+            state.edition = null;
+            state.goal = null;
+            state.hasDataPerm = null;
+            renderCurrentStep();
+            showToast('Wizard reset, please select again');
+        }
+
+        function renderCurrentStep() {
+            const currentId = state.history[state.history.length - 1];
+            const stepObj = steps[currentId];
+            if (!stepObj) return;
+
+            document.getElementById('step-container').innerHTML = stepObj.render();
+            document.getElementById('progress-bar').style.width = `${stepObj.progress}%`;
+
+            const breadcrumbContainer = document.getElementById('breadcrumb-container');
+            breadcrumbContainer.innerHTML = state.history.map((id, idx) => {
+                const isLast = idx === state.history.length - 1;
+                let label = steps[id]?.crumb || id;
+
+                const goalNames = { save: 'Saves', patch: 'Patch', editor: 'Editor', mod: 'Mods' };
+                if (id === 'start' && state.platform) {
+                    label = state.platform === 'pc'
+                        ? 'PC Steam'
+                        : (state.edition === 'xd' ? 'Mobile (XD)' : 'Mobile (Global)');
+                } else if (id === 'select_os' && state.os) {
+                    label = state.os === 'android' ? 'Android' : 'iOS';
+                } else if ((id === 'select_goal' || id === 'pc_goal') && state.goal) {
+                    label = goalNames[state.goal] || label;
+                }
+
+                const clickAttr = !isLast ? `onclick="jumpToHistoryIndex(${idx})"` : '';
+                const arrow = idx < state.history.length - 1 ? '<span class="crumb-sep">›</span>' : '';
+                return `<button type="button" ${clickAttr} class="crumb ${isLast ? 'active' : ''}">${label}</button>${arrow}`;
+            }).join('');
+
+            const navControls = document.getElementById('nav-controls');
+            if (state.history.length > 1) {
+                navControls.classList.remove('hidden');
+            } else {
+                navControls.classList.add('hidden');
+            }
+        }
+
+        function toggleTroubleshootModal(show) {
+            const modal = document.getElementById('troubleshoot-modal');
+            if (show) {
+                modal.classList.add('open');
+            } else {
+                modal.classList.remove('open');
+            }
+        }
+
+        let toastTimer = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        function copyText(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(`Copied: ${text}`);
+            } catch (err) {
+                showToast('Copy failed, please copy manually');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function copySummaryText() {
+            const meta = getEditionMeta();
+            let summary = '';
+
+            if (state.platform === 'pc') {
+                if (state.goal === 'mod') {
+                    summary = '【Terraria PC Steam Mod Setup Guide】\n1. Search for and install free tModLoader on Steam.\n2. Subscribe to desired mods in Steam Workshop and wait for download.\n3. Launch tModLoader from Steam library, go to Manage Mods, enable them and click Reload Mods.\n(Multiplayer requires matching mod lists; check version compatibility if crashing)';
+                } else if (state.goal === 'editor') {
+                    summary = '【Terraria PC Steam Save Editor Guide】\n1. Save folder: Documents / My Games / Terraria (Characters in Players, Worlds in Worlds).\n2. Edit characters: Open Terrasavr in browser, Load .plr, edit and Save to overwrite Players folder.\n3. Edit worlds: Open desktop TEdit, load .wld, edit and save (always backup original files first).';
+                } else {
+                    summary = '【Terraria PC Steam Import/Export Saves Guide】\n1. Exit Terraria completely. Open save path:\nWindows: %USERPROFILE%\\Documents\\My Games\\Terraria\nmacOS: ⌘⇧G to ~/Library/Application Support/Terraria\nLinux: ~/.local/share/Terraria\n2. Worlds (.wld) go into Worlds; Characters (.plr) go into Players. Relaunch game to play.\n3. To export, copy files directly to share. Files ending in .bak are auto-backups (delete .bak to restore). Temporarily disable Steam Cloud if files get overwritten.';
+                }
+                copyText(summary);
+                showToast('Copied PC guide! Ready to paste and share.');
+                return;
+            }
+
+            if (state.os === 'ios') {
+                const iosDirText = meta.isXD
+                    ? 'Browse -> On My iPhone -> Terraria -> [Numeric XD ID]'
+                    : 'Browse -> On My iPhone -> Terraria';
+                const iosPlayers = meta.isXD
+                    ? 'On My iPhone / Terraria / [Numeric XD ID] / Players'
+                    : 'On My iPhone / Terraria / Players';
+
+                if (state.goal === 'patch') {
+                    summary = `【Apple iOS ${meta.name} Terraria Notice】\niOS sandbox prevents access to internal app code directories (no il2cpp/Metadata). Core game patches cannot be installed.\nAlternatives: ① Directly import all-item world/character saves (.wld / .plr); ② Open web-based Terrasavr in Safari to modify character inventory.`;
+                } else if (state.goal === 'editor') {
+                    summary = `【Apple iOS ${meta.name} Terraria Save Editor Guide】\n1. Open Safari and go to Terrasavr (free & no install).\n2. Click Load, select your .plr file: ${iosPlayers}.\n3. Edit items/stats, click Save to download, move file back into Players to overwrite, and force-restart the game (backup first!).\n(App Store editors may have limited features)`;
+                } else {
+                    summary = `【Apple iOS ${meta.name} Terraria Save Guide】\n1. Download save file (.wld map / .plr character) -> Share sheet -> Save to "Files".\n2. Path: ${iosDirText} (Never put into OldSaves).\n3. Worlds in Worlds, characters in Players. Force close and restart the game.\n(If saves on PC: USB cable to iPhone, Finder or iTunes -> File Sharing -> Terraria, drag into Worlds / Players)`;
+                }
+            } else if (state.goal === 'patch') {
+                summary = `【Android / HarmonyOS ${meta.name} Patch Guide】\n1. Install file manager: MT Manager (mt2.cn) or ZArchiver. Download patch file to phone.\n2. Open MT Manager, go to Android -> data -> ${meta.androidPkg} -> files -> il2cpp -> Metadata. (If data is inaccessible, authorize MT Manager via Shizuku at shizuku.rikka.app).\n3. Copy/Move patch file into Metadata, select "Replace" existing file.`;
+            } else if (state.goal === 'editor') {
+                const saveSubPath = meta.isXD ? '[Numeric XD ID] -> world or player' : 'Worlds or Players';
+                summary = `【Android / HarmonyOS ${meta.name} Save Editor Guide】\n1. Install MT Manager (mt2.cn) and Save Editor app. (On Android 11+, install and pair Shizuku via shizuku.rikka.app).\n2. Open editor, load save: Android -> data -> ${meta.androidPkg} -> ${saveSubPath}.\n3. Edit and tap Save, restart game to take effect (always backup first!).`;
+            } else {
+                const idLayer = meta.isXD ? ' -> [Numeric XD ID]' : '';
+                summary = `【Android / HarmonyOS ${meta.name} Save Guide】\n1. Install file manager: MT Manager (mt2.cn) or ZArchiver. Download save to phone.\n2. Open MT Manager, go to Android -> data -> ${meta.androidPkg}${idLayer} (contains ${meta.worldDir} and ${meta.playerDir}). (If data is blocked, authorize via Shizuku at shizuku.rikka.app).\n3. Put worlds (.wld) into ${meta.worldDir}, characters (.plr) into ${meta.playerDir}. Files with .bak can be renamed by removing .bak to restore. Force restart game.`;
+            }
+            copyText(summary);
+            showToast('Copied guide! Ready to paste and share.');
+        }
+
+        window.onload = function () {
+            renderCurrentStep();
+        };
+    </script>
+</body>
+</html>
