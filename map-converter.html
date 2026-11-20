@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>泰拉瑞亚地图签名互转工具 · 国服 ⇄ 国际服</title>
+    <meta name="description" content="纯前端无服务器运行的泰拉瑞亚地图(.wld)签名互转工具，支持国服(xindong)与国际服(relogic)双向互转与批量处理。">
+    <style>
+        :root {
+            --bg-page: #f5f6f8;
+            --bg-header: rgba(255, 255, 255, 0.96);
+            --bg-card: #ffffff;
+            --bg-option: #fafbfc;
+            --bg-option-hover: #f4f6f8;
+            --bg-code: #f1f3f6;
+            --border-subtle: #e7eaee;
+            --border-card: #dce1e6;
+            --text-primary: #20262d;
+            --text-secondary: #48525e;
+            --text-muted: #6b7581;
+            --accent: #3c6287;
+            --accent-dark: #315575;
+            --accent-soft: #eef3f8;
+            --accent-border: #c9d7e4;
+            --green: #3f6d57;
+            --green-soft: #eef5f1;
+            --green-border: #cfe0d6;
+            --amber: #8a6526;
+            --amber-soft: #fbf6ec;
+            --amber-border: #ecdcbd;
+            --rose: #9a4f56;
+            --rose-soft: #faf0f1;
+            --rose-border: #ecd2d5;
+            --slate: #5d5a86;
+            --slate-soft: #f2f1f8;
+            --slate-border: #dbd9e9;
+            --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "HarmonyOS Sans SC", "Segoe UI", Roboto, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            line-height: 1.6;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        button {
+            font-family: inherit;
+            border: none;
+            background: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.88em;
+            background-color: var(--bg-code);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: var(--bg-header);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 580px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .header-inner {
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(60, 98, 135, 0.25);
+        }
+
+        .brand-text-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .brand-text-sub {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 11px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.15s, transform 0.15s;
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            color: var(--text-secondary);
+        }
+
+        .btn-pill:hover {
+            background: var(--bg-option-hover);
+        }
+
+        .btn-pill:active {
+            transform: scale(0.96);
+        }
+
+        /* 顶部离线保障提示条 */
+        .safe-banner {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--green-soft);
+            border: 1px solid var(--green-border);
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 11.5px;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        /* 主体布局 */
+        .main {
+            flex: 1;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 1px 2px rgba(22, 32, 45, 0.03);
+            animation: fadeUp 0.2s ease-out;
+        }
+
+        .badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 9px;
+            border-radius: 5px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-code);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .badge-accent {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+            color: var(--accent);
+        }
+
+        .badge-emerald {
+            background: var(--green-soft);
+            border-color: var(--green-border);
+            color: var(--green);
+        }
+
+        .badge-amber {
+            background: var(--amber-soft);
+            border-color: var(--amber-border);
+            color: var(--amber);
+        }
+
+        .badge-rose {
+            background: var(--rose-soft);
+            border-color: var(--rose-border);
+            color: var(--rose);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .card-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        /* 模式选项卡片（复刻 terraria-guide .option-btn） */
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 12px 14px;
+            border-radius: 9px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: background 0.15s, border-color 0.15s, transform 0.12s;
+            cursor: pointer;
+        }
+
+        .option-btn:hover {
+            background: var(--bg-option-hover);
+            border-color: var(--accent-border);
+        }
+
+        .option-btn:active {
+            transform: scale(0.99);
+        }
+
+        .option-btn.selected {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+        }
+
+        .option-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--accent);
+        }
+
+        .option-btn.selected .option-icon {
+            background: var(--bg-card);
+            border-color: var(--accent-border);
+            color: var(--accent);
+        }
+
+        .option-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .option-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .tag-mini {
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--bg-code);
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tag-emerald {
+            background: var(--green-soft);
+            color: var(--green);
+            border-color: var(--green-border);
+        }
+
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            transition: all 0.15s ease;
+        }
+
+        .option-btn.selected .check-icon {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        /* 拖拽上传区 */
+        .dropzone {
+            border: 2px dashed var(--accent-border);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-option);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .drop-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2px;
+        }
+
+        .drop-title {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .drop-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .btn-select-file {
+            margin-top: 6px;
+            padding: 7px 16px;
+            border-radius: 7px;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 12.5px;
+            font-weight: 600;
+            transition: background 0.15s;
+        }
+
+        .btn-select-file:hover {
+            background: var(--accent-dark);
+        }
+
+        /* 文件处理列表 */
+        .list-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .list-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-sm-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            background: var(--bg-option);
+            border: 1px solid var(--border-card);
+            color: var(--text-secondary);
+            transition: background 0.15s;
+        }
+
+        .btn-sm-action:hover {
+            background: var(--bg-option-hover);
+        }
+
+        .btn-sm-action.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        .btn-sm-action.primary:hover {
+            background: var(--accent-dark);
+        }
+
+        .sub-card {
+            padding: 13px;
+            border-radius: 9px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sub-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .file-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .file-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .file-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .file-actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-subtle);
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .file-out-preview {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .file-btns {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-file-tool {
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s;
+        }
+
+        .btn-file-tool:hover {
+            background: var(--bg-option-hover);
+            border-color: var(--accent-border);
+        }
+
+        .btn-file-tool.btn-dl {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+            color: var(--accent);
+        }
+
+        .btn-file-tool.btn-dl:hover {
+            background: #e1ebf4;
+        }
+
+        /* 十六进制文件头查看 */
+        .hex-box {
+            display: none;
+            background: #20262d;
+            color: #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            line-height: 1.45;
+            overflow-x: auto;
+            margin-top: 4px;
+        }
+
+        .hex-box.open {
+            display: block;
+        }
+
+        .hex-tag {
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        /* 底部与分享 */
+        .footer {
+            padding-top: 6px;
+            padding-bottom: 24px;
+        }
+
+        .share-bar {
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .share-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .share-text strong {
+            display: block;
+            color: var(--text-primary);
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        .btn-share {
+            padding: 7px 11px;
+            border-radius: 7px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-share:hover {
+            background: #e3ecf4;
+        }
+
+        /* 模态弹窗 */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(24, 32, 42, 0.38);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        @media (min-width: 540px) {
+            .modal-backdrop {
+                align-items: center;
+                padding: 16px;
+            }
+        }
+
+        .modal-box {
+            width: 100%;
+            max-width: 540px;
+            max-height: 84vh;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 14px 14px 0 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeUp 0.2s ease-out;
+        }
+
+        @media (min-width: 540px) {
+            .modal-box {
+                border-radius: 12px;
+            }
+        }
+
+        .modal-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 16px 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: var(--bg-option);
+            border: 1px solid var(--border-subtle);
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .faq-q {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        /* 轻提示 Toast */
+        .toast {
+            position: fixed;
+            bottom: 76px;
+            left: 50%;
+            transform: translate(-50%, 8px);
+            z-index: 60;
+            padding: 9px 16px;
+            border-radius: 999px;
+            background: #2b3440;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(22, 32, 45, 0.18);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s, transform 0.18s;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .text-emerald { color: var(--green); font-weight: 600; }
+        .text-sky { color: var(--accent); font-weight: 600; }
+        .text-amber { color: var(--amber); font-weight: 600; }
+        .text-rose { color: var(--rose); font-weight: 600; }
+    </style>
+    <!-- JSZip for multi-file zip packaging -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+    <!-- 顶部固定栏 -->
+    <header class="header">
+        <div class="container header-inner">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-icon" aria-hidden="true">
+                        <!-- Terraria 经典树木/方块图标 -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L4 12h5l-3 6h12l-3-6h5L12 2z"/>
+                            <path d="M12 18v4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="brand-text-title">泰拉瑞亚地图签名互转</div>
+                        <div class="brand-text-sub">国服 (xindong) ⇄ 国际服 (relogic)</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button type="button" onclick="toggleFaqModal(true)" class="btn-pill" title="原理与常见问题">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>原理说明</span>
+                    </button>
+                    <a href="terraria-save-path-zh-cn.html" class="btn-pill" title="返回存档路径指南">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        <span>返回指南</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="safe-banner">
+                <span>🛡️ 纯客户端极速切片替换 · 存档绝不上云 · 保证数据隐私</span>
+                <span style="font-weight: 700;">100% 本地</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container main">
+
+        <!-- 模式选择卡片 -->
+        <div class="card">
+            <div class="badge-row">
+                <span class="step-badge badge-accent">第 1 步 · 选择转换方向</span>
+            </div>
+            <h2 class="card-title">设定目标标识类型</h2>
+            <p class="card-desc">自动检测原地图签名并对调，也可固定转换为指定版本</p>
+
+            <div class="option-list">
+                <!-- 自动互转 -->
+                <button type="button" class="option-btn selected" onclick="setMode('auto', this)">
+                    <div class="option-left">
+                        <div class="option-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 4v12m0 0l4-4m-4 4l-4-4"/></svg>
+                        </div>
+                        <div>
+                            <div class="option-title">
+                                <span>自动互转</span>
+                                <span class="tag-mini tag-emerald">推荐</span>
+                            </div>
+                            <div class="option-sub">国服地图转国际服，国际服地图转国服</div>
+                        </div>
+                    </div>
+                    <div class="check-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                </button>
+
+                <!-- 强制转为国服 -->
+                <button type="button" class="option-btn" onclick="setMode('china', this)">
+                    <div class="option-left">
+                        <div class="option-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
+                        </div>
+                        <div>
+                            <div class="option-title">
+                                <span>转为国服地图 (心动版)</span>
+                            </div>
+                            <div class="option-sub">文件头统一写入 <code>xindong</code> 签名</div>
+                        </div>
+                    </div>
+                    <div class="check-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                </button>
+
+                <!-- 强制转为国际服 -->
+                <button type="button" class="option-btn" onclick="setMode('global', this)">
+                    <div class="option-left">
+                        <div class="option-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <div>
+                            <div class="option-title">
+                                <span>转为国际服地图 (Steam / 移动国际版)</span>
+                            </div>
+                            <div class="option-sub">文件头统一写入 <code>relogic</code> 签名</div>
+                        </div>
+                    </div>
+                    <div class="check-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- 上传区域卡片 -->
+        <div class="card">
+            <div class="badge-row">
+                <span class="step-badge badge-accent">第 2 步 · 导入地图文件</span>
+            </div>
+            <h2 class="card-title">选择或拖入地图 (.wld)</h2>
+            <p class="card-desc">支持多选及批量处理，通常位于游戏的 <code>Worlds</code> 目录下</p>
+
+            <div class="dropzone" id="dropzone">
+                <div class="drop-icon-box">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="drop-title">拖拽地图文件到这里</div>
+                <div class="drop-hint">或点击下方按钮选择本地文件（支持批量）</div>
+                <button type="button" class="btn-select-file" id="browseBtn">选择 .wld 文件</button>
+                <input type="file" id="fileInput" accept=".wld" multiple style="display: none;">
+            </div>
+        </div>
+
+        <!-- 转换任务列表 -->
+        <div class="card" id="listCard" style="display: none;">
+            <div class="list-header">
+                <div>
+                    <span class="card-title" style="font-size: 15px;">待处理地图</span>
+                    <span style="font-size: 12px; color: var(--text-muted); margin-left: 4px;" id="fileCountBadge">(0)</span>
+                </div>
+                <div class="list-header-actions">
+                    <button type="button" class="btn-sm-action primary" id="downloadAllBtn">⚡ 全部转换下载</button>
+                    <button type="button" class="btn-sm-action" id="downloadZipBtn">📦 ZIP 打包</button>
+                    <button type="button" class="btn-sm-action" id="clearListBtn">清空</button>
+                </div>
+            </div>
+
+            <div id="fileItems"></div>
+        </div>
+
+    </main>
+
+    <!-- 底部操作与分享 -->
+    <footer class="container footer">
+        <div class="share-bar">
+            <div class="share-text">
+                <strong>群友也需要转换地图签名？</strong>
+                <span>一键复制转换使用精简指南发到群里</span>
+            </div>
+            <button type="button" onclick="copyGuideText()" class="btn-share">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span>复制简明说明</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- 原理说明与排查弹窗（复刻 terraria-guide troubleshoot-modal） -->
+    <div id="faq-modal" class="modal-backdrop" onclick="if(event.target===this) toggleFaqModal(false)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span style="font-weight: 700; font-size: 15px; color: var(--text-primary);">核心原理与常见问题</span>
+                <button type="button" onclick="toggleFaqModal(false)" style="padding: 4px 8px; color: var(--text-muted); font-size: 16px;" aria-label="关闭">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="faq-item">
+                    <div class="faq-q">1. 什么是地图签名？为什么要转换？</div>
+                    <div>
+                        泰拉瑞亚官方国际服与心动代理的国服，在地图文件（<code>.wld</code>）前 64 字节中使用不同的标识字符串标记发行版本。<br>
+                        • <strong class="text-sky">国际服 (Steam/GOG/移动版)</strong> 标识为：<code>relogic</code><br>
+                        • <strong class="text-rose">国服 (心动代理版)</strong> 标识为：<code>xindong</code><br>
+                        如果签名不匹配，游戏在载入地图时会提示“无法加载地图”或在选图列表中不显示。
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">2. 转换会损坏地图里的建筑、箱子或 NPC 吗？</div>
+                    <div>
+                        <strong class="text-emerald">完全不会！</strong> 本程序严格按照二进制流切片原理，仅对文件头内匹配到的 7 个 ASCII 字节做等长替换（<code>relogic</code> ⇄ <code>xindong</code>），其余数十MB至数百MB的地形、方块、电路与实体数据 100% 保持完全一致。
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">3. 为什么转换速度这么快？</div>
+                    <div>
+                        由于采用了浏览器底层的 <code>File.slice()</code> 技术，它只是在操作系统层面创建虚拟数据引用指针，在保存瞬间才拼合输出，因此无需把几百兆的数据解压或载入内存，即使在手机浏览器上也是毫秒级完成。
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">4. 如何部署到 GitHub Pages？</div>
+                    <div>
+                        只需在 GitHub 创建公开仓库，将本页面的 <code>index.html</code> 提交至根目录，然后在仓库 <strong>Settings → Pages</strong> 中将来源分支选为 <code>main / root</code> 保存，等待 1 分钟即可生成免费永久在线网址。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 轻提示 -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // 常量
+        const SIG_GLOBAL_BYTES = new Uint8Array([0x72, 0x65, 0x6C, 0x6F, 0x67, 0x69, 0x63]); // relogic
+        const SIG_CHINA_BYTES  = new Uint8Array([0x78, 0x69, 0x6E, 0x64, 0x6F, 0x6E, 0x67]); // xindong
+        const HEADER_SCAN_LEN = 64;
+
+        // 状态
+        let currentMode = "auto";
+        let fileList = []; // { id, file, header, sigType, offset, targetType, outName }
+
+        // DOM
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("fileInput");
+        const browseBtn = document.getElementById("browseBtn");
+        const listCard = document.getElementById("listCard");
+        const fileItems = document.getElementById("fileItems");
+        const fileCountBadge = document.getElementById("fileCountBadge");
+        const downloadAllBtn = document.getElementById("downloadAllBtn");
+        const downloadZipBtn = document.getElementById("downloadZipBtn");
+        const clearListBtn = document.getElementById("clearListBtn");
+
+        // 模式切换
+        function setMode(mode, element) {
+            currentMode = mode;
+            document.querySelectorAll(".option-btn").forEach(btn => btn.classList.remove("selected"));
+            element.classList.add("selected");
+            recomputeAllTargets();
+            showToast(`已切换为: ${mode === 'auto' ? '自动互转' : (mode === 'china' ? '强制转为国服' : '强制转为国际服')}`);
+        }
+
+        // 文件选择交互
+        browseBtn.addEventListener("click", () => fileInput.click());
+        fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+
+        ['dragenter', 'dragover'].forEach(name => {
+            dropzone.addEventListener(name, (e) => {
+                e.preventDefault();
+                dropzone.classList.add("dragover");
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(name => {
+            dropzone.addEventListener(name, (e) => {
+                e.preventDefault();
+                dropzone.classList.remove("dragover");
+            });
+        });
+
+        dropzone.addEventListener("drop", (e) => {
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length) {
+                handleFiles(dt.files);
+            }
+        });
+
+        async function handleFiles(files) {
+            if (!files || files.length === 0) return;
+
+            let addedCount = 0;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileId = "f_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
+
+                const slice = file.slice(0, HEADER_SCAN_LEN);
+                const buffer = await slice.arrayBuffer();
+                const header = new Uint8Array(buffer);
+
+                const { sigType, offset } = detectSignature(header);
+                const { targetType, outName } = calcTargetAndName(file.name, sigType, currentMode);
+
+                fileList.push({
+                    id: fileId,
+                    file: file,
+                    header: header,
+                    sigType: sigType,
+                    offset: offset,
+                    targetType: targetType,
+                    outName: outName
+                });
+                addedCount++;
+            }
+
+            renderList();
+            fileInput.value = "";
+            showToast(`已导入 ${addedCount} 个地图文件`);
+        }
+
+        function detectSignature(header) {
+            const glIdx = indexOfSequence(header, SIG_GLOBAL_BYTES);
+            const chIdx = indexOfSequence(header, SIG_CHINA_BYTES);
+
+            if (glIdx < 0 && chIdx < 0) return { sigType: "unknown", offset: -1 };
+            if (glIdx < 0) return { sigType: "china", offset: chIdx };
+            if (chIdx < 0) return { sigType: "global", offset: glIdx };
+            return glIdx < chIdx
+                ? { sigType: "global", offset: glIdx }
+                : { sigType: "china", offset: chIdx };
+        }
+
+        function indexOfSequence(source, target) {
+            outer: for (let i = 0; i <= source.length - target.length; i++) {
+                for (let j = 0; j < target.length; j++) {
+                    if (source[i + j] !== target[j]) continue outer;
+                }
+                return i;
+            }
+            return -1;
+        }
+
+        function calcTargetAndName(fileName, sigType, mode) {
+            let targetType = "unknown";
+            if (mode === "china") {
+                targetType = "china";
+            } else if (mode === "global") {
+                targetType = "global";
+            } else {
+                if (sigType === "china") targetType = "global";
+                else if (sigType === "global") targetType = "china";
+                else targetType = "unknown";
+            }
+
+            let base = fileName;
+            let ext = "";
+            const dotIdx = fileName.lastIndexOf(".");
+            if (dotIdx !== -1) {
+                base = fileName.substring(0, dotIdx);
+                ext = fileName.substring(dotIdx);
+            }
+
+            const suffixCn = "_国服";
+            const suffixGl = "_国际服";
+
+            if (base.endsWith(suffixCn)) {
+                base = base.substring(0, base.length - suffixCn.length);
+            } else if (base.endsWith(suffixGl)) {
+                base = base.substring(0, base.length - suffixGl.length);
+            }
+
+            let newSuffix = "";
+            if (targetType === "china") newSuffix = suffixCn;
+            else if (targetType === "global") newSuffix = suffixGl;
+
+            const outName = `${base}${newSuffix}${ext}`;
+            return { targetType, outName };
+        }
+
+        function recomputeAllTargets() {
+            fileList.forEach(item => {
+                const { targetType, outName } = calcTargetAndName(item.file.name, item.sigType, currentMode);
+                item.targetType = targetType;
+                item.outName = outName;
+            });
+            renderList();
+        }
+
+        function formatHex(data, highlightOffset = -1) {
+            let fullRows = [];
+            for (let i = 0; i < data.length; i += 16) {
+                let hexRow = [];
+                let asciiRow = "";
+                const offsetHex = i.toString(16).padStart(4, "0").toUpperCase();
+
+                for (let j = 0; j < 16; j++) {
+                    const idx = i + j;
+                    if (idx < data.length) {
+                        const b = data[idx];
+                        const isHighlight = highlightOffset >= 0 && idx >= highlightOffset && idx < highlightOffset + 7;
+                        const bHex = b.toString(16).padStart(2, "0").toUpperCase();
+
+                        if (isHighlight) {
+                            hexRow.push(`<span class="hex-tag">${bHex}</span>`);
+                        } else {
+                            hexRow.push(bHex);
+                        }
+
+                        const c = (b >= 32 && b <= 126) ? String.fromCharCode(b) : ".";
+                        if (isHighlight) {
+                            asciiRow += `<span class="hex-tag">${c}</span>`;
+                        } else {
+                            asciiRow += c;
+                        }
+                    } else {
+                        hexRow.push("  ");
+                    }
+                }
+                fullRows.push(`${offsetHex}  ${hexRow.join(" ")}  |${asciiRow}|`);
+            }
+            return fullRows.join("\n");
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return "0 B";
+            const k = 1024;
+            const sizes = ["B", "KB", "MB", "GB"];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (bytes / Math.pow(k, i)).toFixed(2) + " " + sizes[i];
+        }
+
+        function createConvertedBlob(item) {
+            if (item.offset < 0 || item.targetType === "unknown") {
+                return item.file;
+            }
+            const replacementBytes = item.targetType === "china" ? SIG_CHINA_BYTES : SIG_GLOBAL_BYTES;
+            const part1 = item.file.slice(0, item.offset);
+            const part2 = replacementBytes;
+            const part3 = item.file.slice(item.offset + 7);
+            return new Blob([part1, part2, part3], { type: "application/octet-stream" });
+        }
+
+        function downloadItem(id) {
+            const item = fileList.find(f => f.id === id);
+            if (!item) return;
+
+            const blob = createConvertedBlob(item);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = item.outName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            showToast(`已生成下载: ${item.outName}`);
+        }
+
+        function toggleHex(id) {
+            const el = document.getElementById("hex_" + id);
+            if (el) el.classList.toggle("open");
+        }
+
+        function deleteItem(id) {
+            fileList = fileList.filter(f => f.id !== id);
+            renderList();
+        }
+
+        function renderList() {
+            if (fileList.length === 0) {
+                listCard.style.display = "none";
+                return;
+            }
+
+            listCard.style.display = "block";
+            fileCountBadge.textContent = `(${fileList.length})`;
+
+            fileItems.innerHTML = fileList.map(item => {
+                let sigBadge = "";
+                if (item.sigType === "china") {
+                    sigBadge = `<span class="step-badge badge-rose">国服 (xindong)</span>`;
+                } else if (item.sigType === "global") {
+                    sigBadge = `<span class="step-badge badge-accent">国际服 (relogic)</span>`;
+                } else {
+                    sigBadge = `<span class="step-badge badge-amber">未检测到签名</span>`;
+                }
+
+                let targetBadge = item.targetType === "china"
+                    ? `<span class="step-badge badge-rose" style="padding:1px 6px;">🇨🇳 国服</span>`
+                    : `<span class="step-badge badge-accent" style="padding:1px 6px;">🌐 国际服</span>`;
+
+                const hexContent = formatHex(item.header, item.offset);
+
+                return `
+                    <div class="sub-card">
+                        <div class="file-top">
+                            <div>
+                                <div class="file-name">${item.file.name}</div>
+                                <div class="file-meta-row">
+                                    <span>${formatBytes(item.file.size)}</span>
+                                    <span>·</span>
+                                    <span>当前: ${sigBadge}</span>
+                                    ${item.offset >= 0 ? `<span>· 偏移 <code>0x${item.offset.toString(16).toUpperCase()}</code></span>` : ''}
+                                </div>
+                            </div>
+                            <button type="button" class="btn-file-tool" onclick="deleteItem('${item.id}')" title="移除" style="padding:4px 7px;">✕</button>
+                        </div>
+
+                        <div class="file-actions-row">
+                            <div class="file-out-preview">
+                                <span>转为:</span>
+                                ${targetBadge}
+                                <code>${item.outName}</code>
+                            </div>
+                            <div class="file-btns">
+                                <button type="button" class="btn-file-tool" onclick="toggleHex('${item.id}')">查看头</button>
+                                <button type="button" class="btn-file-tool btn-dl" onclick="downloadItem('${item.id}')">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <span>下载</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <pre class="hex-box" id="hex_${item.id}">${hexContent}</pre>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        downloadAllBtn.addEventListener("click", () => {
+            if (fileList.length === 0) return;
+            fileList.forEach((item, index) => {
+                setTimeout(() => downloadItem(item.id), index * 300);
+            });
+        });
+
+        downloadZipBtn.addEventListener("click", async () => {
+            if (fileList.length === 0) return;
+            if (typeof JSZip === "undefined") {
+                showToast("JSZip 库未加载，正在改为逐个依次下载...");
+                downloadAllBtn.click();
+                return;
+            }
+
+            downloadZipBtn.textContent = "打包中...";
+            downloadZipBtn.disabled = true;
+
+            try {
+                const zip = new JSZip();
+                for (const item of fileList) {
+                    const blob = createConvertedBlob(item);
+                    zip.file(item.outName, blob);
+                }
+
+                const zipBlob = await zip.generateAsync({ type: "blob" });
+                const url = URL.createObjectURL(zipBlob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `Terraria_Maps_${Date.now()}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showToast("ZIP 打包完成并开始下载！");
+            } catch (err) {
+                console.error(err);
+                showToast("打包失败: " + err.message);
+            } finally {
+                downloadZipBtn.textContent = "📦 ZIP 打包";
+                downloadZipBtn.disabled = false;
+            }
+        });
+
+        clearListBtn.addEventListener("click", () => {
+            fileList = [];
+            renderList();
+            showToast("已清空列表");
+        });
+
+        // 弹窗与 Toast
+        function toggleFaqModal(show) {
+            const modal = document.getElementById("faq-modal");
+            if (show) modal.classList.add("open");
+            else modal.classList.remove("open");
+        }
+
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.classList.add("show");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+        }
+
+        function copyGuideText() {
+            const text = `【泰拉瑞亚地图签名互转说明】\n1. 国际服(Steam/GOG/移动版)与国服(心动版)地图无法直接通用，原因为前 64 字节签名分别包含 relogic 与 xindong。\n2. 使用纯前端转换工具，打开网页直接将 .wld 地图拖入，即可瞬间互转并导出。\n3. 全程由本地浏览器切片处理，不上传云端，地图建筑与物品100%无损。`;
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand("copy");
+                showToast("已复制精简教程，快去群里粘贴吧！");
+            } catch (e) {
+                showToast("复制失败，请手动选择复制");
+            }
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+</html>
