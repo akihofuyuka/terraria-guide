@@ -186,7 +186,7 @@
         .main {
             flex: 1;
             padding-top: 16px;
-            padding-bottom: 16px;
+            padding-bottom: 28px;
             display: flex;
             flex-direction: column;
             gap: 14px;
@@ -894,20 +894,6 @@
 
     </main>
 
-    <!-- 底部操作与分享 -->
-    <footer class="container footer">
-        <div class="share-bar">
-            <div class="share-text">
-                <strong>群友也需要转换地图签名？</strong>
-                <span>一键复制转换使用精简指南发到群里</span>
-            </div>
-            <button type="button" onclick="copyGuideText()" class="btn-share">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                <span>复制简明说明</span>
-            </button>
-        </div>
-    </footer>
-
     <!-- 原理说明与排查弹窗（复刻 terraria-guide troubleshoot-modal） -->
     <div id="faq-modal" class="modal-backdrop" onclick="if(event.target===this) toggleFaqModal(false)">
         <div class="modal-box">
@@ -929,7 +915,9 @@
                 <div class="faq-item">
                     <div class="faq-q">2. 转换会损坏地图里的建筑、箱子或 NPC 吗？</div>
                     <div>
-                        <strong class="text-emerald">完全不会！</strong> 本程序严格按照二进制流切片原理，仅对文件头内匹配到的 7 个 ASCII 字节做等长替换（<code>relogic</code> ⇄ <code>xindong</code>），其余数十MB至数百MB的地形、方块、电路与实体数据 100% 保持完全一致。
+                        转换本身仅替换文件头 7 字节签名，不破坏地图原有结构。但请特别注意：<br>
+                        • 如果从<strong class="text-rose">国服转换到国际服</strong>，进入游戏后会丢失国服专属的数据；<br>
+                        • 当<strong class="text-amber">版本不一致</strong>时，转换成低版本会丢失属于高版本的物品。
                     </div>
                 </div>
 
@@ -937,13 +925,6 @@
                     <div class="faq-q">3. 为什么转换速度这么快？</div>
                     <div>
                         由于采用了浏览器底层的 <code>File.slice()</code> 技术，它只是在操作系统层面创建虚拟数据引用指针，在保存瞬间才拼合输出，因此无需把几百兆的数据解压或载入内存，即使在手机浏览器上也是毫秒级完成。
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-q">4. 如何部署到 GitHub Pages？</div>
-                    <div>
-                        只需在 GitHub 创建公开仓库，将本页面的 <code>index.html</code> 提交至根目录，然后在仓库 <strong>Settings → Pages</strong> 中将来源分支选为 <code>main / root</code> 保存，等待 1 分钟即可生成免费永久在线网址。
                     </div>
                 </div>
             </div>
@@ -1313,23 +1294,6 @@
             toast.classList.add("show");
             clearTimeout(toastTimer);
             toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
-        }
-
-        function copyGuideText() {
-            const text = `【泰拉瑞亚地图签名互转说明】\n1. 国际服(Steam/GOG/移动版)与国服(心动版)地图无法直接通用，原因为前 64 字节签名分别包含 relogic 与 xindong。\n2. 使用纯前端转换工具，打开网页直接将 .wld 地图拖入，即可瞬间互转并导出。\n3. 全程由本地浏览器切片处理，不上传云端，地图建筑与物品100%无损。`;
-            const textarea = document.createElement("textarea");
-            textarea.value = text;
-            textarea.style.position = "fixed";
-            textarea.style.opacity = "0";
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand("copy");
-                showToast("已复制精简教程，快去群里粘贴吧！");
-            } catch (e) {
-                showToast("复制失败，请手动选择复制");
-            }
-            document.body.removeChild(textarea);
         }
     </script>
 </body>
